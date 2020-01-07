@@ -161,6 +161,7 @@ public class Robot extends TimedRobot //TimedRobot
         elevator.refresh();
         intake.refresh();
         tilt.refresh();
+        colorSensor.matchedColor();
         subsystemController.refresh();
         Scheduler.getInstance().run();
        
