@@ -12,7 +12,7 @@ public class Tilt extends Subsystem implements Loggable, Refreshable {
     private static int ENCODER_CHANNEL_A;
     private static int ENCODER_CHANNEL_B;
 
-    private static int MOTOR_PORT = 5;
+    private static int MOTOR_PORT = 6;
     private static final double SPEED = 0.4;
 
     private boolean isReverse = false;

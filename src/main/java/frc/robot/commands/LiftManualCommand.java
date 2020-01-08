@@ -27,7 +27,7 @@ public class LiftManualCommand extends Command {
 
     @Override
     protected void initialize() {
-        Robot.getInstance().getElevator().getElevatorMotor().setSpeed(speed);
+        Robot.getInstance().getElevator().setMotorsSpeed(speed);
     }
 
     @Override
@@ -38,6 +38,6 @@ public class LiftManualCommand extends Command {
 
     @Override
     protected void end() {
-        Robot.getInstance().getElevator().getElevatorMotor().setSpeed(0);
+        Robot.getInstance().getElevator().setMotorsSpeed(0);
     }
 }

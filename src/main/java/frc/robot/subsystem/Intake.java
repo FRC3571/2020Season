@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Intake extends Subsystem implements Loggable, Refreshable {
 
-    private static int FIRST_MOTOR_PORT = 3;
-    private static int SECOND_MOTOR_PORT = 4;
+    private static int FIRST_MOTOR_PORT = 0;
+    private static int SECOND_MOTOR_PORT = 1;
 
     private Spark firstMotor;
     private Spark secondMotor;

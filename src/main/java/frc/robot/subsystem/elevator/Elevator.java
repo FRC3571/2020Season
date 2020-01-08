@@ -18,7 +18,8 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
     private ElevatorStage currentStage = ElevatorStage.BOTTOM;
 
     //motor ports
-    private static int ELEVATOR_PORT = 2;
+    private static int FIRST_MOTOR_PORT = 4;
+    private static int SECOND_MOTOR_PORT = 5;
 
     //encoder ports/channels
     private static int ELEVATOR_ENCODER_CHANNEL_A = 0;
@@ -53,7 +54,8 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
 
     //elevator
     //motors
-    private Spark elevatorMotor = new Spark(ELEVATOR_PORT);
+    private Spark firstMotor;
+    private Spark secondMotor;
 
     //encoder
     private Encoder elevatorEncoder;
@@ -63,6 +65,8 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
     public Elevator() {
 
         //initialize hardware
+        firstMotor = new Spark(4);
+        secondMotor = new Spark(5);
         initializeEncoders();
         controller = Robot.getInstance().getSubsystemController();
     }
@@ -71,9 +75,20 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
     public void refresh() {
         //run elevator code here
         //incase encoders stop working
+        manualControl(controller);
+    }
+
+    public void manualControl(XboxController controller){
         if(Math.abs(controller.LeftStick.Y) >= 0.1) {
-            elevatorMotor.set(controller.LeftStick.Y);
+            setMotorsSpeed(-controller.LeftStick.Y);
         }
+     
+    }
+
+    public void setMotorsSpeed(double i){
+        System.out.println("The input is:     " + i);
+        firstMotor.set(i);
+        secondMotor.set(i);
     }
 
     @Override
@@ -87,8 +102,12 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
 
     }
 
-    public Spark getElevatorMotor() {
-        return elevatorMotor;
+    public Spark getFirstMotor() {
+        return firstMotor;
+    }
+
+    public Spark getSecondMotor() {
+        return secondMotor;
     }
 
     public Encoder getDistanceEncoder() {
@@ -117,8 +136,9 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
     public void setStage(ElevatorStage currentStage) {
         this.currentStage = currentStage;
     }
-}
 
+
+}
 
 enum ElevatorStage {
     BOTTOM,

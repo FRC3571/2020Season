@@ -60,7 +60,7 @@ public class LiftCommand extends Command {
             finished = true;
         }
         else {
-            Robot.getInstance().getElevator().getElevatorMotor().setSpeed(speed);
+            Robot.getInstance().getElevator().setMotorsSpeed(speed);
         }
     }
 
@@ -68,7 +68,7 @@ public class LiftCommand extends Command {
     protected boolean isFinished() {
         if(finished) {
             targetDistance = 0;
-            Robot.getInstance().getElevator().getElevatorMotor().setSpeed(0);
+            Robot.getInstance().getElevator().getSecondMotor().setSpeed(0);
             finished = false;
             return true;
         }
