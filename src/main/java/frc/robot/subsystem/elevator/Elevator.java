@@ -65,8 +65,8 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
     public Elevator() {
 
         //initialize hardware
-        firstMotor = new Spark(4);
-        secondMotor = new Spark(5);
+        firstMotor = new Spark(FIRST_MOTOR_PORT);
+        secondMotor = new Spark(SECOND_MOTOR_PORT);
         initializeEncoders();
         controller = Robot.getInstance().getSubsystemController();
     }
@@ -82,7 +82,6 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
         if(Math.abs(controller.LeftStick.Y) >= 0.1) {
             setMotorsSpeed(-controller.LeftStick.Y);
         }
-     
     }
 
     public void setMotorsSpeed(double i){
