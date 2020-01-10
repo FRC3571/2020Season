@@ -9,6 +9,7 @@ package frc.robot;
 
 //import ca.team3571.offseason.auto.AutonomousExecutor;
 import frc.robot.commands.ClimbCommand;
+import frc.robot.commands.FollowBall;
 import frc.robot.commands.LiftManualCommand;
 import frc.robot.commands.OpenCloseCommand;
 import frc.robot.commands.auto.PracticeAuto;
@@ -25,6 +26,9 @@ import frc.robot.util.XboxController;
 import edu.wpi.cscore.UsbCamera;
 //import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 //import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -67,6 +71,9 @@ public class Robot extends TimedRobot //TimedRobot
     private PowerDistributionPanel pdp;
     private AHRS navx;
     private static Robot exposedInstance;
+    private NetworkTableInstance inst;
+    private NetworkTable table;
+    private NetworkTableEntry entry;
 
     /**
      * Exposes instance once it's ready and populated
@@ -109,6 +116,10 @@ public class Robot extends TimedRobot //TimedRobot
         rioDuino = new RioDuino();
 
         navx = new AHRS(SPI.Port.kMXP); 
+
+        inst = NetworkTableInstance.getDefault();
+        table = inst.getTable("OpenSight");
+        entry = table.getEntry("centerYellowBall-x");
 
         colorSensor = new ColorSensor();
         runCamera();
@@ -157,14 +168,25 @@ public class Robot extends TimedRobot //TimedRobot
      */
     @Override
     public void teleopPeriodic() {
-        driveTrain.refresh();
+       // driveTrain.refresh();
+        
         elevator.refresh();
         intake.refresh();
         tilt.refresh();
         colorSensor.matchedColor();
         subsystemController.refresh();
+
         Scheduler.getInstance().run();
        
+
+        if (entry.getDouble(0) > 0.05) 
+        {
+            System.out.println("WORKING");
+            driveTrain.tankdrive(0.7, -0.7);
+        }
+        else if (entry.getDouble(0) < -0.05) driveTrain.tankdrive(-0.7, 0.7);
+        else  driveTrain.arcadeDrive(0, 0);
+
         debug();
     }
 
@@ -217,6 +239,7 @@ public class Robot extends TimedRobot //TimedRobot
 
     private void lognavx(){
         SmartDashboard.putNumber("DriveTrain/Position/Yaw", navx.getYaw());
+        SmartDashboard.putNumber("Vision/xPos", entry.getDouble(0));
     }
 
     public void log(Level logLevel, String message) {
@@ -262,6 +285,7 @@ public class Robot extends TimedRobot //TimedRobot
       
         //intake  
         subsystemController.Buttons.A.runCommand(new OpenCloseCommand(), XboxController.CommandState.WhenPressed);
+        subsystemController.Buttons.B.runCommand(new FollowBall(entry), XboxController.CommandState.WhenPressed);
         //subsystemController.Buttons.B.runCommand(new TiltCommand(), XboxController.CommandState.WhenPressed);
         
         //elevator 
