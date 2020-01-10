@@ -2,14 +2,7 @@ package frc.robot.commands;
 
 import frc.robot.Robot;
 
-import com.revrobotics.CANError;
-import com.revrobotics.CANPIDController;
-import com.revrobotics.ControlType;
-
-//import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
-//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SetPosition extends Command {
     double xPos;

@@ -4,25 +4,18 @@ import frc.robot.Robot;
 import frc.robot.util.RobotMath;
 import frc.robot.subsystem.DriveTrain;
 
-import com.revrobotics.CANError;
+//import com.revrobotics.CANError;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.ControlType;
 
 //import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 //import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * Drive the given distance straight (negative values go backwards). Uses a
- * local PID controller to run a simple PID loop that is only enabled while this
- * command is running. The input is the averaged values of the left and right
- * encoders.
- */
 public class DriveStraightDistance extends Command {
     private double targetDistance;
     private CANPIDController leftPID, rightPID;
-    private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, maxVel, minVel, maxAcc, allowedErr;
+    private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxVel, minVel, maxAcc, allowedErr;
     private double error;
 
     public DriveStraightDistance(double d) {
@@ -39,7 +32,6 @@ public class DriveStraightDistance extends Command {
         kFF = 0.000156; // 0.0003
         kMaxOutput = 1;
         kMinOutput = -1;
-        maxRPM = 5700;
 
         // Smart Motion Coefficients
         maxVel = 2000; // rpm
@@ -97,7 +89,6 @@ public class DriveStraightDistance extends Command {
         kFF = 0.000156; // 0.0003
         kMaxOutput = 1;
         kMinOutput = -1;
-        maxRPM = 5700;
 
         // Smart Motion Coefficients
         maxVel = 2000; // rpm

@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class TurnToAngle extends Command implements PIDOutput {
 
-    private PIDController turnController;
+    private final PIDController turnController;
     private double rotateToAngleRate;
-    private AHRS ahrs;
+    private final AHRS ahrs;
     private double degrees;
 
     // PID Constants
@@ -27,7 +27,7 @@ public class TurnToAngle extends Command implements PIDOutput {
 
     private static final double kToleranceDegrees = 2.0f;
 
-    public TurnToAngle(double d, AHRS a) {
+    public TurnToAngle(final double d, final AHRS a) {
         ahrs = a;
         degrees = d;
 
@@ -42,7 +42,7 @@ public class TurnToAngle extends Command implements PIDOutput {
         requires(Robot.getInstance().getDrive());
     }
 
-    public TurnToAngle(double x, double y, AHRS a) {
+    public TurnToAngle(final double x, final double y, final AHRS a) {
         ahrs = a;
         degrees = RobotMath.getAngleFromPoint(x, y);
 
@@ -105,7 +105,7 @@ public class TurnToAngle extends Command implements PIDOutput {
     }
 
     @Override
-    public void pidWrite(double output) {
+    public void pidWrite(final double output) {
         rotateToAngleRate = output;
     }
 }

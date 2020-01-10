@@ -1,37 +1,33 @@
 package frc.robot.commands;
 
 import frc.robot.Robot;
-import frc.robot.subsystem.DriveTrain;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class FollowBall extends Command {
-    private final NetworkTableEntry xCoord;
-    private double number;
+    private double xPos;
 
-    public FollowBall(final NetworkTableEntry e) {
-        xCoord = e;
+    public FollowBall() {
         requires(Robot.getInstance().getDrive());
+        Robot.getInstance().getVisionProcessor();
     }
 
     @Override
     protected void initialize() {
-        number = xCoord.getDouble(0);; //have to do this cuz camera is upside down
-        
+        xPos = Robot.getInstance().getVisionProcessor().yellowBallxPos();
+
+        if (xPos > 0.05) Robot.getInstance().getDrive().tankdrive(0.7, -0.7);
+        else if (xPos < -0.05) Robot.getInstance().getDrive().tankdrive(-0.7, 0.7);
     }
 
     @Override
     protected void execute(){
-        System.out.println("THIS IS WOKRING AND " + number);
-        if (number > 0.4) Robot.getInstance().getDrive().arcadeDrive(0, 0.3);
-        else if (number < -0.4) Robot.getInstance().getDrive().arcadeDrive(0, -0.3);
-        number = xCoord.getDouble(0);
+        xPos = Robot.getInstance().getVisionProcessor().yellowBallxPos();
     }
     
     
     @Override
     protected boolean isFinished() {
-        return (number < 0.4 && number > -0.4);
+        return (xPos < 0.05 && xPos > -0.05);
     }
 
     @Override
