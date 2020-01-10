@@ -1,10 +1,19 @@
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) 2017 FIRST. All Rights Reserved.                             */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
+
 package frc.robot;
 
+//import ca.team3571.offseason.auto.AutonomousExecutor;
 import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.FollowBall;
 import frc.robot.commands.LiftManualCommand;
 import frc.robot.commands.OpenCloseCommand;
 import frc.robot.commands.auto.PracticeAuto;
+//import ca.team3571.offseason.commands.auto.PracticeAuto;
 import frc.robot.component.CameraController;
 import frc.robot.component.ColorSensor;
 import frc.robot.component.RobotCamera;
@@ -38,8 +47,17 @@ import java.util.logging.Logger;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 
-public class Robot extends TimedRobot
+/**
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as described in the IterativeRobot
+ * documentation. If you change the name of this class or the package after
+ * creating this project, you must also update the build.properties file in the
+ * project.
+ */
+// If you rename or move this class, update the build.properties file in the project root
+public class Robot extends TimedRobot //TimedRobot
 {
+
     private DriveTrain driveTrain;
     private Elevator elevator;
     private Intake intake;
@@ -49,7 +67,7 @@ public class Robot extends TimedRobot
     private RioDuino rioDuino;
     private CameraController cameraController;
     private ColorSensor colorSensor;
-    private XboxController subsystemController;
+    private XboxController subsystemController = new XboxController(1);
     private PowerDistributionPanel pdp;
     private AHRS navx;
     private static Robot exposedInstance;
@@ -57,6 +75,25 @@ public class Robot extends TimedRobot
     private NetworkTable table;
     private NetworkTableEntry entry;
 
+    /**
+     * Exposes instance once it's ready and populated
+     * @return singleton instance of robot
+     */
+    public static Robot getInstance() {
+        if(exposedInstance==null) {
+            throw new IllegalStateException("#robotInit must finish its invocation!");
+        }
+        return exposedInstance;
+    }
+
+    public XboxController getSubsystemController() {
+        return subsystemController;
+    }
+
+    /**
+     * This function is run when the robot is first started up and should be
+     * used for any initialization code.
+     */
     @Override
     public void robotInit() {
         //set reference for exposed instance
@@ -78,18 +115,28 @@ public class Robot extends TimedRobot
         //rio
         rioDuino = new RioDuino();
 
-        navx = new AHRS(SPI.Port.kMXP);
-        subsystemController = new XboxController(1);
+        navx = new AHRS(SPI.Port.kMXP); 
 
         inst = NetworkTableInstance.getDefault();
         table = inst.getTable("OpenSight");
         entry = table.getEntry("centerYellowBall-x");
 
         colorSensor = new ColorSensor();
-        //runCamera();
+        runCamera();
         initController();
     }
 
+    /**
+     * This autonomous (along with the chooser code above) shows how to select
+     * between different autonomous modes using the dashboard. The sendable
+     * chooser code works with the Java SmartDashboard. If you prefer the
+     * LabVIEW Dashboard, remove all of the chooser code and uncomment the
+     * getString line to get the auto name from the text box below the Gyro
+     *
+     * <p>You can add additional auto modes by adding additional comparisons to
+     * the switch structure below with additional strings. If using the
+     * SendableChooser make sure to add them to the chooser code above as well.
+     */
     @Override
     public void autonomousInit() {
 //        boolean signalReceived = false;
@@ -104,14 +151,21 @@ public class Robot extends TimedRobot
         new PracticeAuto().start();
     }
 
+    /**
+     * This function is called periodically during autonomous.
+     */
     @Override
     public void autonomousPeriodic() {
-        Scheduler.getInstance().run();
+        Scheduler.getInstance().run(); //dont delete this u idiot
         //teleopPeriodic();
         
         debug();
     }
 
+    /**
+     * This function is called periodically during operator control.
+     * gets called every 20 millis
+     */
     @Override
     public void teleopPeriodic() {
        // driveTrain.refresh();
@@ -119,6 +173,7 @@ public class Robot extends TimedRobot
         elevator.refresh();
         intake.refresh();
         tilt.refresh();
+        colorSensor.matchedColor();
         subsystemController.refresh();
 
         Scheduler.getInstance().run();
@@ -135,6 +190,9 @@ public class Robot extends TimedRobot
         debug();
     }
 
+    /**
+     * This function is called periodically during test mode.
+     */
     @Override
     public void testPeriodic() {
         new Thread() {
@@ -189,17 +247,6 @@ public class Robot extends TimedRobot
     }
 
     //getters
-    public static Robot getInstance() {
-        if(exposedInstance==null) {
-            throw new IllegalStateException("#robotInit must finish its invocation!");
-        }
-        return exposedInstance;
-    }
-
-    public XboxController getSubsystemController() {
-        return subsystemController;
-    }
-
     public DriveTrain getDrive() {
         return driveTrain;
     }
@@ -245,4 +292,5 @@ public class Robot extends TimedRobot
         subsystemController.Buttons.LB.runCommand(new LiftCommand(true), XboxController.CommandState.WhenPressed);
         subsystemController.Buttons.RB.runCommand(new LiftCommand(false), XboxController.CommandState.WhenPressed);
     }
+
 }
