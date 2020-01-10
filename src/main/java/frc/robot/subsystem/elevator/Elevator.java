@@ -35,9 +35,6 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
     //limit switch mapping
     private static int LIMIT_SWITCH_BOTTOM;
 
-    //controller port
-    private static int CONTROLLER_PORT;
-
     static {
 
         FORWARD_DIRECTION = false;
@@ -48,8 +45,6 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
         WHEEL_RADIUS = 47.75; //in mm
 
         LIMIT_SWITCH_BOTTOM = 2;    //DIO = 2
-
-        CONTROLLER_PORT = 0;
     }
 
     //elevator
@@ -75,17 +70,16 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
     public void refresh() {
         //run elevator code here
         //incase encoders stop working
-        manualControl(controller);
+        joystickControl(controller);
     }
 
-    public void manualControl(XboxController controller){
+    public void joystickControl(XboxController controller){
         if(Math.abs(controller.LeftStick.Y) >= 0.1) {
             setMotorsSpeed(-controller.LeftStick.Y);
         }
     }
 
     public void setMotorsSpeed(double i){
-        System.out.println("The input is:     " + i);
         firstMotor.set(i);
         secondMotor.set(i);
     }
