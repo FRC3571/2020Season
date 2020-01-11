@@ -128,11 +128,11 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
         this.currentStage = currentStage;
     }
 
-
+    public enum ElevatorStage {
+        BOTTOM,
+        MIDDLE,
+        TOP
+    }
 }
 
-enum ElevatorStage {
-    BOTTOM,
-    MIDDLE,
-    TOP
-}
+

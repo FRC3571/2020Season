@@ -1,7 +1,7 @@
 package frc.robot.subsystem.elevator;
 
-
 import frc.robot.Robot;
+import frc.robot.subsystem.elevator.Elevator.ElevatorStage;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class LiftCommand extends Command {
