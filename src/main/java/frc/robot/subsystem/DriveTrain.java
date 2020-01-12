@@ -291,10 +291,10 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
     public void refresh() {
         controller.refresh();
 
-        controller.Buttons.X.runCommand(new ChangeGear(1), XboxController.CommandState.WhenPressed);
-        controller.Buttons.Y.runCommand(new ChangeGear(2), XboxController.CommandState.WhenPressed);
-        controller.Buttons.B.runCommand(new ChangeGear(3), XboxController.CommandState.WhenPressed);
-        controller.Buttons.A.runCommand(new ChangeGear(4), XboxController.CommandState.WhenPressed);
+        controller.Buttons.X.bindCommand(new ChangeGear(1), XboxController.CommandState.WhenPressed);
+        controller.Buttons.Y.bindCommand(new ChangeGear(2), XboxController.CommandState.WhenPressed);
+        controller.Buttons.B.bindCommand(new ChangeGear(3), XboxController.CommandState.WhenPressed);
+        controller.Buttons.A.bindCommand(new ChangeGear(4), XboxController.CommandState.WhenPressed);
     }
 
     @Override

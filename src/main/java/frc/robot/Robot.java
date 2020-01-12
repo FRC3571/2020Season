@@ -104,7 +104,7 @@ public class Robot extends TimedRobot
         visionProcessor.refresh();
         getColorAssignment();
         Scheduler.getInstance().run();
-        
+
         // Test Code for Vision Processing, this will be moved to a command later
         if (visionProcessor.yellowBallxPos() > 0.05)
             driveTrain.tankdrive(0.7, -0.7);
@@ -168,17 +168,17 @@ public class Robot extends TimedRobot
         // XboxController.CommandState.WhenPressed);
 
         // climbing
-        subsystemController.Buttons.Y.runCommand(new ClimbCommand(), XboxController.CommandState.WhenPressed);
+        subsystemController.Buttons.Y.bindCommand(new ClimbCommand(), XboxController.CommandState.WhenPressed);
 
         // intake
-        subsystemController.Buttons.A.runCommand(new OpenCloseCommand(), XboxController.CommandState.WhenPressed);
-        subsystemController.Buttons.B.runCommand(new FollowBall(), XboxController.CommandState.WhenPressed);
+        subsystemController.Buttons.A.bindCommand(new OpenCloseCommand(), XboxController.CommandState.WhenPressed);
+        subsystemController.Buttons.B.bindCommand(new FollowBall(), XboxController.CommandState.WhenPressed);
         // subsystemController.Buttons.B.runCommand(new TiltCommand(),
         // XboxController.CommandState.WhenPressed);
 
         // elevator
-        subsystemController.Buttons.LB.runCommand(new LiftCommand(true), XboxController.CommandState.WhenPressed);
-        subsystemController.Buttons.RB.runCommand(new LiftCommand(false), XboxController.CommandState.WhenPressed);
+        subsystemController.Buttons.LB.bindCommand(new LiftCommand(true), XboxController.CommandState.WhenPressed);
+        subsystemController.Buttons.RB.bindCommand(new LiftCommand(false), XboxController.CommandState.WhenPressed);
     }
 
     private enum colorAssignment {

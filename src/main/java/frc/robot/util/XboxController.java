@@ -308,7 +308,7 @@ public class XboxController {
 		 * @param state
 		 *            A selection of when to run the command
 		 */
-		public void runCommand(Command command, CommandState state) {
+		public void bindCommand(Command command, CommandState state) {
 			if (buttonT == null)
 				buttonT = new Trigger() {
 					@Override
