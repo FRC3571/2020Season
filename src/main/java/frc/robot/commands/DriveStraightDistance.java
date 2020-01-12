@@ -74,7 +74,7 @@ public class DriveStraightDistance extends Command {
         
         targetDistance = RobotMath.getDistanceFromPoint(xTarget, yTarget);
 
-        if (Math.abs(RobotMath.getAngleFromPoint(xTarget, yTarget) - Robot.getInstance().getNAVX().getYaw()) > 90){
+        if (Math.abs(RobotMath.getAngleFromPoint(xTarget, yTarget) - Robot.getInstance().getNAVX().getAHRS().getYaw()) > 90){
             targetDistance *= -1;
         }
 

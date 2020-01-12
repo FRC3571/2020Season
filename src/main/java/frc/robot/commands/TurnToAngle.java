@@ -4,10 +4,6 @@ import frc.robot.Robot;
 import frc.robot.subsystem.DriveTrain;
 import frc.robot.util.RobotMath;
 
-import java.util.Map;
-
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.command.Command;
@@ -16,7 +12,6 @@ public class TurnToAngle extends Command implements PIDOutput {
 
     private final PIDController turnController;
     private double rotateToAngleRate;
-    private final AHRS ahrs;
     private double degrees;
 
     // PID Constants
@@ -27,11 +22,10 @@ public class TurnToAngle extends Command implements PIDOutput {
 
     private static final double kToleranceDegrees = 2.0f;
 
-    public TurnToAngle(final double d, final AHRS a) {
-        ahrs = a;
+    public TurnToAngle(final double d) {
         degrees = d;
 
-        turnController = new PIDController(kP, kI, kD, kF, ahrs, this);
+        turnController = new PIDController(kP, kI, kD, kF, Robot.getInstance().getNAVX().getAHRS(), this);
         turnController.setInputRange(-180.0f, 180.0f);
         turnController.setOutputRange(-1, 1);
         turnController.setAbsoluteTolerance(kToleranceDegrees);
@@ -42,27 +36,24 @@ public class TurnToAngle extends Command implements PIDOutput {
         requires(Robot.getInstance().getDrive());
     }
 
-    public TurnToAngle(final double x, final double y, final AHRS a) {
-        ahrs = a;
+    public TurnToAngle(final double x, final double y) {
         degrees = RobotMath.getAngleFromPoint(x, y);
 
-        if (Math.abs(degrees - Robot.getInstance().getNAVX().getYaw()) > 90){
-            if (degrees >= 0 && degrees <= 180){
+        if (Math.abs(degrees - Robot.getInstance().getNAVX().getAHRS().getYaw()) > 90) {
+            if (degrees >= 0 && degrees <= 180) {
                 degrees -= 180;
-            }
-            else {
+            } else {
                 degrees += 180;
             }
         }
 
         System.out.println("ANGLE IS" + degrees);
 
-        turnController = new PIDController(kP, kI, kD, kF, ahrs, this);
+        turnController = new PIDController(kP, kI, kD, kF, Robot.getInstance().getNAVX().getAHRS(), this);
         turnController.setInputRange(-180.0f, 180.0f);
         turnController.setOutputRange(-1, 1);
         turnController.setAbsoluteTolerance(kToleranceDegrees);
         turnController.setContinuous(true);
-
 
         turnController.setSetpoint(degrees);
 
@@ -74,20 +65,19 @@ public class TurnToAngle extends Command implements PIDOutput {
         Robot.getInstance().getDrive().reset();
 
         Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.FOURTH);
-        
+
         turnController.enable();
     }
 
     @Override
     protected void execute() {
-        //if (rotateToAngleRate < 0.15) rotateToAngleRate -= 0.7;
-        //else rotateToAngleRate += 0.55;
+        // if (rotateToAngleRate < 0.15) rotateToAngleRate -= 0.7;
+        // else rotateToAngleRate += 0.55;
         if (rotateToAngleRate < 0) {
-             rotateToAngleRate = RobotMath.mapDouble(rotateToAngleRate, -1.0, 0.0, -0.5, -0.2);
-         }
-        else {
-             rotateToAngleRate = RobotMath.mapDouble(rotateToAngleRate, 0, 1, 0.2, 0.5);
-         }
+            rotateToAngleRate = RobotMath.mapDouble(rotateToAngleRate, -1.0, 0.0, -0.5, -0.2);
+        } else {
+            rotateToAngleRate = RobotMath.mapDouble(rotateToAngleRate, 0, 1, 0.2, 0.5);
+        }
 
         Robot.getInstance().getDrive().arcadeDrive(0, -rotateToAngleRate);
     }

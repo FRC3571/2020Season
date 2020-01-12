@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import frc.robot.Robot;
 import frc.robot.subsystem.DriveTrain;
+import frc.robot.subsystem.DriveTrain.DriveMode;
 import frc.robot.util.XboxController;
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -13,22 +14,26 @@ public class DriveJoystick extends Command {
     public DriveJoystick(XboxController controller) {
         this.driveTrain = Robot.getInstance().getDrive();
         this.controller = controller;
+        setInterruptible(true);
         requires(driveTrain);
     }
 
-    // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        driveTrain.drive(controller);
+        if (driveTrain.ChosenDrive == DriveMode.AONEJOY) {
+            driveTrain.arcadeDrive(controller.RightStick.Y, -controller.RightStick.X);
+        } else if (driveTrain.ChosenDrive == DriveMode.ATWOJOY) {
+            driveTrain.arcadeDrive(controller.LeftStick.Y, -controller.RightStick.X);
+        } else if (driveTrain.ChosenDrive == DriveMode.TANK) {
+            driveTrain.tankdrive(controller.LeftStick.Y, controller.RightStick.Y);
+        }
     }
 
-    // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
         return false; // Runs until interrupted
     }
 
-    // Called once after isFinished returns true
     @Override
     protected void end() {
         driveTrain.arcadeDrive(0, 0);

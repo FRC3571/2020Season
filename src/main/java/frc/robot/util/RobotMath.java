@@ -1,7 +1,5 @@
 package frc.robot.util;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import frc.robot.Robot;
 import frc.robot.subsystem.DriveTrain;
 
@@ -68,8 +66,6 @@ public class RobotMath {
     }
 
     public static double MapJoyValues(double value, double low, double high){
-        double v = value;
-
             if (value > 0){
                 if ( value > 0.75){
                     value = mapDouble(value, 0.75, 1, high, 1);

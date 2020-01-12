@@ -21,7 +21,7 @@ import com.revrobotics.CANEncoder;
 public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
 
     // Drive Modes
-    private enum DriveMode {
+    public enum DriveMode {
         AONEJOY, ATWOJOY, TANK,
     }
 
@@ -43,13 +43,12 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
     private static final int LEFTLID;
     private static final int RIGHTLID;
 
-    private DriveMode ChosenDrive;
+    public DriveMode ChosenDrive;
     private Gear ChosenGear;
     private SendableChooser<DriveMode> DriveModeChooser;
     private static final double FIRSTGEARRATIO;
     private static final double SECONDGEARRATIO;
     private static final double THIRDGEARRATIO;
-
 
     // SparkMax Objects
     private CANSparkMax leftF;
@@ -97,30 +96,6 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
         setDefaultCommand(new DriveJoystick(controller));
     }
 
-    public double getyPos() {
-        return yPos;
-    }
-
-    public void setyPos(double yPos) {
-        this.yPos = yPos;
-    }
-
-    public double getxPos() {
-        return xPos;
-    }
-
-    public void setxPos(double xPos) {
-        this.xPos = xPos;
-    }
-
-    public Gear getChosenGear() {
-        return ChosenGear;
-    }
-
-    public void setChosenGear(Gear chosenGear) {
-        this.ChosenGear = chosenGear;
-    }
-
     public DriveTrain() {
         super("DriveTrain", 2.0, 0, 0);
 
@@ -158,6 +133,98 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
         yPos = 0;
 
         controller = new XboxController(CONTROLLER_PORT);
+    }
+
+    public void arcadeDrive(double throttle, double rotate) {
+         lastSpeed = (float) throttle;
+
+        if (ChosenGear == Gear.FIRST) {
+            throttle *= FIRSTGEARRATIO;
+            rotate *= FIRSTGEARRATIO;
+        } else if (ChosenGear == Gear.SECOND) {
+            throttle *= SECONDGEARRATIO;
+            rotate *= SECONDGEARRATIO;
+        } else if (ChosenGear == Gear.THIRD) {
+            throttle *= THIRDGEARRATIO;
+            rotate *= THIRDGEARRATIO;
+        }
+
+        SmartDashboard.putNumber("DriveTrain/Drive/ArcadeDrive/Throttle", throttle);
+
+        SmartDashboard.putNumber("DriveTrain/Drive/ArcadeDrive/Rotate", rotate);
+
+        drive.arcadeDrive(throttle, rotate);
+    }
+
+    public void tankdrive(double left, double right) {
+        if (ChosenGear == Gear.FIRST) {
+            left *= FIRSTGEARRATIO;
+            right *= FIRSTGEARRATIO;
+        } else if (ChosenGear == Gear.SECOND) {
+            left *= SECONDGEARRATIO;
+            right *= SECONDGEARRATIO;
+        } else if (ChosenGear == Gear.THIRD) {
+            left *= THIRDGEARRATIO;
+            right *= THIRDGEARRATIO;
+        }
+
+        SmartDashboard.putNumber("DriveTrain/Drive/TankDrive/Left", left);
+
+        SmartDashboard.putNumber("DriveTrain/Drive/TankDrive/Right", right);
+
+        drive.tankDrive(left, right);
+    }
+
+   /* public void drive(XboxController xbox) {
+        
+    }*/
+
+    /**
+     * Reset the robots sensors to the zero states.
+     */
+    public void reset() {
+        leftLEncoder.setPosition(0);
+        rightLEncoder.setPosition(0);
+        setChosenGear(Gear.SECOND);
+    }
+
+    public void resetDisplacement() {
+        xPos = 0;
+        yPos = 0;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    private void updateDistance() {
+        double changeinDistance = 0;
+        double prevDistance = distance;
+        leftDistance = -leftLEncoder.getPosition();
+        rightDistance = rightLEncoder.getPosition();
+        distance = (leftDistance + rightDistance) / 2;
+
+        AHRS navx = Robot.getInstance().getNAVX().getAHRS();
+
+        double angle = navx.getYaw();
+
+        if (angle >= 0 && angle <= 90) {
+            angle = RobotMath.mapDouble(angle, 0, 90, 90, 0);
+        } else if (angle >= 90 && angle <= 180) {
+            angle = RobotMath.mapDouble(angle, 90, 180, 360, 270);
+        } else if (angle <= 0 && angle >= -90) {
+            angle = RobotMath.mapDouble(angle, -90, 0, 180, 90);
+        } else if (angle <= -90 && angle >= -180) {
+            angle = RobotMath.mapDouble(angle, -180, -90, 270, 180);
+        }
+
+        changeinDistance = distance - prevDistance;
+
+        angle = Math.toRadians(angle);
+
+        setxPos(getxPos() + (changeinDistance * Math.cos(angle)));
+
+        setyPos(getyPos() + (changeinDistance * Math.sin(angle)));
     }
 
     @Override
@@ -207,121 +274,6 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
         ChosenDrive = DriveModeChooser.getSelected();
     }
 
-    public void arcadeDrive(double throttle, double rotate) {
-         lastSpeed = (float) throttle;
-
-        if (ChosenGear == Gear.FIRST) {
-            throttle *= FIRSTGEARRATIO;
-            rotate *= FIRSTGEARRATIO;
-        } else if (ChosenGear == Gear.SECOND) {
-            throttle *= SECONDGEARRATIO;
-            rotate *= SECONDGEARRATIO;
-        } else if (ChosenGear == Gear.THIRD) {
-            throttle *= THIRDGEARRATIO;
-            rotate *= THIRDGEARRATIO;
-        }
-
-        // throttle = RobotMath.MapJoyValues(throttle, 0.14, 0.4);
-
-        // rotate = RobotMath.MapJoyValues(rotate, 0.14, 0.4);
-
-        SmartDashboard.putNumber("DriveTrain/Drive/ArcadeDrive/Throttle", throttle);
-
-        SmartDashboard.putNumber("DriveTrain/Drive/ArcadeDrive/Rotate", rotate);
-
-        drive.arcadeDrive(throttle, rotate);
-    }
-
-    public void tankdrive(double left, double right) {
-
-        if (ChosenGear == Gear.FIRST) {
-            left *= FIRSTGEARRATIO;
-            right *= FIRSTGEARRATIO;
-        } else if (ChosenGear == Gear.SECOND) {
-            left *= SECONDGEARRATIO;
-            right *= SECONDGEARRATIO;
-        } else if (ChosenGear == Gear.THIRD) {
-            left *= THIRDGEARRATIO;
-            right *= THIRDGEARRATIO;
-        }
-
-        // left = RobotMath.MapJoyValues(left, 0.14, 0.4);
-
-        // right = RobotMath.MapJoyValues(right, 0.14, 0.4);
-
-        SmartDashboard.putNumber("DriveTrain/Drive/TankDrive/Left", left);
-
-        SmartDashboard.putNumber("DriveTrain/Drive/TankDrive/Right", right);
-
-        drive.tankDrive(left, right);
-    }
-
-    public void drive(XboxController xbox) {
-        if (ChosenDrive == DriveMode.AONEJOY) {
-            arcadeDrive(xbox.RightStick.Y, -xbox.RightStick.X);
-        } else if (ChosenDrive == DriveMode.ATWOJOY) {
-            arcadeDrive(xbox.LeftStick.Y, -xbox.RightStick.X);
-        } else if (ChosenDrive == DriveMode.TANK) {
-            tankdrive(xbox.LeftStick.Y, xbox.RightStick.Y);
-        }
-    }
-
-    /**
-     * Reset the robots sensors to the zero states.
-     */
-    public void reset() {
-        leftLEncoder.setPosition(0);
-        rightLEncoder.setPosition(0);
-        setChosenGear(Gear.SECOND);
-    }
-
-    public void resetDisplacement() {
-        xPos = 0;
-        yPos = 0;
-    }
-
-    public double getDistance() {
-        return distance;
-    }
-
-    private void updateDistance() {
-        double changeinDistance = 0;
-        double prevDistance = distance;
-        leftDistance = -leftLEncoder.getPosition();
-        rightDistance = rightLEncoder.getPosition();
-        distance = (leftDistance + rightDistance) / 2;
-
-        AHRS navx = Robot.getInstance().getNAVX();
-
-        double angle = navx.getYaw();
-
-        if (angle >= 0 && angle <= 90) {
-            angle = RobotMath.mapDouble(angle, 0, 90, 90, 0);
-        } else if (angle >= 90 && angle <= 180) {
-            angle = RobotMath.mapDouble(angle, 90, 180, 360, 270);
-        } else if (angle <= 0 && angle >= -90) {
-            angle = RobotMath.mapDouble(angle, -90, 0, 180, 90);
-        } else if (angle <= -90 && angle >= -180) {
-            angle = RobotMath.mapDouble(angle, -180, -90, 270, 180);
-        }
-
-        changeinDistance = distance - prevDistance;
-
-        angle = Math.toRadians(angle);
-
-        setxPos(getxPos() + (changeinDistance * Math.cos(angle)));
-
-        setyPos(getyPos() + (changeinDistance * Math.sin(angle)));
-    }
-
-    public CANSparkMax getLeftL() {
-        return leftL;
-    }
-
-    public CANSparkMax getRightL() {
-        return rightL;
-    }
-
     private void initializeEncoders() {
         leftLEncoder = leftL.getEncoder();
         leftFEncoder = leftF.getEncoder();
@@ -364,5 +316,37 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
         }
         // debug output
         System.out.println("OUTPUT -> " + output);
+    }
+
+    public CANSparkMax getLeftL() {
+        return leftL;
+    }
+
+    public CANSparkMax getRightL() {
+        return rightL;
+    }
+
+    public double getyPos() {
+        return yPos;
+    }
+
+    public void setyPos(double yPos) {
+        this.yPos = yPos;
+    }
+
+    public double getxPos() {
+        return xPos;
+    }
+
+    public void setxPos(double xPos) {
+        this.xPos = xPos;
+    }
+
+    public Gear getChosenGear() {
+        return ChosenGear;
+    }
+
+    public void setChosenGear(Gear chosenGear) {
+        this.ChosenGear = chosenGear;
     }
 }

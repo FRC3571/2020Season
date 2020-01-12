@@ -1,6 +1,5 @@
 package frc.robot.commands.auto;
 
-import frc.robot.Robot;
 import frc.robot.commands.DriveStraightDistance;
 import frc.robot.commands.TurnToAngle;
 //import frc.robot.util.RobotMath;
@@ -13,7 +12,7 @@ public class DriveToPoint extends CommandGroup {
         xTarget = x;
         yTarget = y;
 
-        addSequential(new TurnToAngle(xTarget, yTarget, Robot.getInstance().getNAVX()));
+        addSequential(new TurnToAngle(xTarget, yTarget));
         addSequential(new DriveStraightDistance(xTarget, yTarget));
     }
 }
