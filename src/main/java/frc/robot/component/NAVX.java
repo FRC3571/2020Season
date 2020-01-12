@@ -5,8 +5,9 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.util.Loggable;
 
-public class NAVX {
+public class NAVX implements Loggable{
     private AHRS ahrs;
 
     public NAVX() {
