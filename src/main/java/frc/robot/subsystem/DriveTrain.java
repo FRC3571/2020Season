@@ -119,7 +119,7 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
 
         drive = new DifferentialDrive(leftL, rightL);
 
-        initializeEncoders();
+        initEncoders();
 
         leftL.setInverted(true);
         rightL.setInverted(true);
@@ -132,7 +132,7 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
         xPos = 0;
         yPos = 0;
 
-        controller = new XboxController(CONTROLLER_PORT);
+        initController();
     }
 
     public void arcadeDrive(double throttle, double rotate) {
@@ -274,7 +274,7 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
         ChosenDrive = DriveModeChooser.getSelected();
     }
 
-    private void initializeEncoders() {
+    private void initEncoders() {
         leftLEncoder = leftL.getEncoder();
         leftFEncoder = leftF.getEncoder();
 
@@ -287,14 +287,18 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
         rightFEncoder.setPositionConversionFactor(0.09); // 0.0869565217
     }
 
-    @Override
-    public void refresh() {
-        controller.refresh();
-
+    private void initController(){
+        controller = new XboxController(CONTROLLER_PORT);
+        
         controller.Buttons.X.bindCommand(new ChangeGear(1), XboxController.CommandState.WhenPressed);
         controller.Buttons.Y.bindCommand(new ChangeGear(2), XboxController.CommandState.WhenPressed);
         controller.Buttons.B.bindCommand(new ChangeGear(3), XboxController.CommandState.WhenPressed);
         controller.Buttons.A.bindCommand(new ChangeGear(4), XboxController.CommandState.WhenPressed);
+    }
+
+    @Override
+    public void refresh() {
+        controller.refresh();
     }
 
     @Override
