@@ -6,25 +6,29 @@ import frc.robot.subsystem.DriveTrain;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ChangeGear extends Command {
-    private double gear;
+    private int gear;
 
-    public ChangeGear(double d) {
+    public ChangeGear(int d) {
         gear = d;
     }
 
     @Override
     protected void initialize() {
-        if (gear == 1){
-            Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.FIRST);
-        }
-        else if (gear == 2){
-            Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.SECOND);
-        }
-        else if (gear == 3){
-            Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.THIRD);
-        }
-        else {
-            Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.FOURTH);
+        switch (gear) {
+            case 1:
+                Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.FIRST);
+                break;
+            case 2:
+                Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.SECOND);
+                break;
+            case 3:
+                Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.THIRD);
+                break;
+            case 4:
+                Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.FOURTH);
+                break;
+            default:
+                break;
         }
     }
     
