@@ -1,8 +1,8 @@
 package frc.robot.commands;
 
 import frc.robot.Robot;
+import frc.robot.Constants.DriveConstants.DriveMode;
 import frc.robot.subsystem.DriveTrain;
-import frc.robot.subsystem.DriveTrain.DriveMode;
 import frc.robot.util.XboxController;
 import edu.wpi.first.wpilibj.command.Command;
 

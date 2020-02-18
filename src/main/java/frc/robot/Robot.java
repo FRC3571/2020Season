@@ -35,7 +35,7 @@ public class Robot extends TimedRobot
     private RioDuino rioDuino;
     //private CameraController cameraController;
     private ColorSensor colorSensor;
-    private final XboxController subsystemController = new XboxController(1);
+    private XboxController subsystemController;
     private PowerDistributionPanel pdp;
     private NAVX navx;
     private static Robot exposedInstance;
@@ -49,6 +49,7 @@ public class Robot extends TimedRobot
         exposedInstance = this;
 
         pdp = new PowerDistributionPanel();
+        subsystemController = new XboxController(Constants.RobotConstants.kController);
 
         pneumatics = new Pneumatics();
         driveTrain = new DriveTrain();
@@ -142,22 +143,6 @@ public class Robot extends TimedRobot
         visionProcessor.log();
         navx.log();
     }
-
-    /*
-     * private void runCamera() { UsbCamera cameraOne =
-     * CameraServer.getInstance().startAutomaticCapture(0); UsbCamera cameraTwo =
-     * CameraServer.getInstance().startAutomaticCapture(1); // UsbCamera cameraThree
-     * = CameraServer.getInstance().startAutomaticCapture(2);
-     * cameraOne.setWhiteBalanceAuto(); cameraTwo.setWhiteBalanceAuto(); //
-     * cameraThree.setWhiteBalanceAuto();
-     * 
-     * cameraController = new CameraController();// new RobotCamera(cameraOne), new
-     * RobotCamera(cameraTwo)); cameraController.addCamera(new
-     * RobotCamera(cameraOne)); cameraController.addCamera(new
-     * RobotCamera(cameraTwo)); // cameraController.addCamera(new
-     * RobotCamera(cameraThree)); cameraController.begin();
-     * cameraController.setPriority(0); }
-     */
 
     private void initController() {
         // subsystemController.Buttons.Y.runCommand(new ClimbCommand(),

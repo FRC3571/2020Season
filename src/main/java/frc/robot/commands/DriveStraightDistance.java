@@ -1,8 +1,8 @@
 package frc.robot.commands;
 
 import frc.robot.Robot;
+import frc.robot.Constants.DriveConstants.Gear;
 import frc.robot.util.RobotMath;
-import frc.robot.subsystem.DriveTrain;
 
 //import com.revrobotics.CANError;
 import com.revrobotics.CANPIDController;
@@ -127,7 +127,7 @@ public class DriveStraightDistance extends Command {
     @Override
     protected void initialize() {
         Robot.getInstance().getDrive().reset();
-        Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.FOURTH);
+        Robot.getInstance().getDrive().setChosenGear(Gear.FOURTH);
     }
 
     @Override
@@ -147,6 +147,6 @@ public class DriveStraightDistance extends Command {
     @Override
     protected void end() {
         //Robot.getInstance().getDrive().reset();
-        Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.SECOND);
+        Robot.getInstance().getDrive().setChosenGear(Gear.SECOND);
     }
 }

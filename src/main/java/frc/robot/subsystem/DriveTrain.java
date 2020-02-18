@@ -1,13 +1,16 @@
 package frc.robot.subsystem;
 
+import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.Constants.DriveConstants.DriveMode;
+import frc.robot.Constants.DriveConstants.Gear;
 import frc.robot.commands.ChangeGear;
 import frc.robot.commands.DriveJoystick;
 import frc.robot.commands.SetPosition;
 import frc.robot.util.Loggable;
 import frc.robot.util.RobotMath;
 import frc.robot.util.XboxController;
-import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,38 +21,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANEncoder;
 
-public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
-
-    // Drive Modes
-    public enum DriveMode {
-        AONEJOY, ATWOJOY, TANK,
-    }
-
-    // Gears (Speeds)
-    public enum Gear {
-        FIRST, SECOND, THIRD, FOURTH,
-    }
-
-    // Controlller Port
-    private static int CONTROLLER_PORT;
-
-    // Gear Ratios
-    public static final double GEAR_RATIO_LOW;
-    public static final double GEAR_RATIO_HIGH;
-
-    // SparkMax CANIDs
-    private static final int LEFTFID;
-    private static final int RIGHTFID;
-    private static final int LEFTLID;
-    private static final int RIGHTLID;
-
+public class DriveTrain extends Subsystem implements Loggable, Refreshable {
+    
     public DriveMode ChosenDrive;
     private Gear ChosenGear;
     private SendableChooser<DriveMode> DriveModeChooser;
-    private static final double FIRSTGEARRATIO;
-    private static final double SECONDGEARRATIO;
-    private static final double THIRDGEARRATIO;
-
     // SparkMax Objects
     private CANSparkMax leftF;
     private CANSparkMax rightF;
@@ -70,26 +46,7 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
     // Driver Controller
     private XboxController controller;
 
-    private float lastSpeed;
-
     private double xPos, yPos;
-
-    static {
-        // Initialization
-        CONTROLLER_PORT = 0;
-
-        GEAR_RATIO_LOW = 4.6;
-        GEAR_RATIO_HIGH = 2.7;
-
-        LEFTLID = 10;
-        LEFTFID = 11;
-        RIGHTLID = 20;
-        RIGHTFID = 21;
-
-        FIRSTGEARRATIO = 0.3;
-        SECONDGEARRATIO = 0.4;
-        THIRDGEARRATIO = 0.5;
-    }
 
     @Override
     protected void initDefaultCommand() {
@@ -97,17 +54,16 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
     }
 
     public DriveTrain() {
-        super("DriveTrain", 2.0, 0, 0);
 
         ChosenDrive = DriveMode.ATWOJOY;
-        ChosenGear = Gear.SECOND;
+        ChosenGear = Gear.THIRD;
         DriveModeChooser = new SendableChooser<>();
 
         // initialize hardware
-        rightL = new CANSparkMax(RIGHTLID, MotorType.kBrushless);
-        leftL = new CANSparkMax(LEFTLID, MotorType.kBrushless);
-        rightF = new CANSparkMax(RIGHTFID, MotorType.kBrushless);
-        leftF = new CANSparkMax(LEFTFID, MotorType.kBrushless);
+        rightL = new CANSparkMax(Constants.DriveConstants.kRightLeadID, MotorType.kBrushless);
+        leftL = new CANSparkMax(Constants.DriveConstants.kLeftLeadID, MotorType.kBrushless);
+        rightF = new CANSparkMax(Constants.DriveConstants.kRightFollowID, MotorType.kBrushless);
+        leftF = new CANSparkMax(Constants.DriveConstants.kLeftFollowID, MotorType.kBrushless);
 
         leftL.restoreFactoryDefaults();
         rightL.restoreFactoryDefaults();
@@ -136,17 +92,15 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
     }
 
     public void arcadeDrive(double throttle, double rotate) {
-         lastSpeed = (float) throttle;
-
         if (ChosenGear == Gear.FIRST) {
-            throttle *= FIRSTGEARRATIO;
-            rotate *= FIRSTGEARRATIO;
+            throttle *= Constants.DriveConstants.kGearRatioFirst;
+            rotate *= Constants.DriveConstants.kGearRatioFirst;
         } else if (ChosenGear == Gear.SECOND) {
-            throttle *= SECONDGEARRATIO;
-            rotate *= SECONDGEARRATIO;
+            throttle *= Constants.DriveConstants.kGearRatioSecond;
+            rotate *= Constants.DriveConstants.kGearRatioSecond;
         } else if (ChosenGear == Gear.THIRD) {
-            throttle *= THIRDGEARRATIO;
-            rotate *= THIRDGEARRATIO;
+            throttle *= Constants.DriveConstants.kGearRatioThird;
+            rotate *= Constants.DriveConstants.kGearRatioThird;
         }
 
         SmartDashboard.putNumber("DriveTrain/Drive/ArcadeDrive/Throttle", throttle);
@@ -158,14 +112,14 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
 
     public void tankdrive(double left, double right) {
         if (ChosenGear == Gear.FIRST) {
-            left *= FIRSTGEARRATIO;
-            right *= FIRSTGEARRATIO;
+            left *= Constants.DriveConstants.kGearRatioFirst;
+            right *= Constants.DriveConstants.kGearRatioFirst;
         } else if (ChosenGear == Gear.SECOND) {
-            left *= SECONDGEARRATIO;
-            right *= SECONDGEARRATIO;
+            left *= Constants.DriveConstants.kGearRatioSecond;
+            right *= Constants.DriveConstants.kGearRatioSecond;
         } else if (ChosenGear == Gear.THIRD) {
-            left *= THIRDGEARRATIO;
-            right *= THIRDGEARRATIO;
+            left *= Constants.DriveConstants.kGearRatioThird;
+            right *= Constants.DriveConstants.kGearRatioThird;
         }
 
         SmartDashboard.putNumber("DriveTrain/Drive/TankDrive/Left", left);
@@ -175,13 +129,6 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
         drive.tankDrive(left, right);
     }
 
-   /* public void drive(XboxController xbox) {
-        
-    }*/
-
-    /**
-     * Reset the robots sensors to the zero states.
-     */
     public void reset() {
         leftLEncoder.setPosition(0);
         rightLEncoder.setPosition(0);
@@ -288,7 +235,7 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
     }
 
     private void initController(){
-        controller = new XboxController(CONTROLLER_PORT);
+        controller = new XboxController(Constants.DriveConstants.kController);
         
         controller.Buttons.X.bindCommand(new ChangeGear(1), XboxController.CommandState.WhenPressed);
         controller.Buttons.Y.bindCommand(new ChangeGear(2), XboxController.CommandState.WhenPressed);
@@ -299,27 +246,6 @@ public class DriveTrain extends PIDSubsystem implements Loggable, Refreshable {
     @Override
     public void refresh() {
         controller.refresh();
-    }
-
-    @Override
-    protected double returnPIDInput() {
-        return (rightLEncoder.getPosition() - leftLEncoder.getPosition());
-    }
-
-    @Override
-    protected void usePIDOutput(double output) {
-        if (output > 0) {
-            // too much
-            lastSpeed += 0.01;
-            drive.tankDrive(lastSpeed, lastSpeed);
-
-        } else if (output < 0) {
-            lastSpeed -= 0.01;
-            drive.tankDrive(lastSpeed, lastSpeed);
-            // too little
-        }
-        // debug output
-        System.out.println("OUTPUT -> " + output);
     }
 
     public CANSparkMax getLeftL() {
