@@ -31,6 +31,11 @@ public final class Constants {
     }
 
     public static final class ElevatorConstants {
+        public enum ElevatorStage {
+            BOTTOM,
+            MIDDLE,
+            TOP
+        }
     }
 
     public static final class RobotConstants {

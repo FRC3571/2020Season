@@ -18,44 +18,29 @@ public class Pneumatics extends Subsystem {
 
     private boolean openState;
     private boolean intakeOpenState;
-
-
-
+    
     public Pneumatics(){
 
         c = new Compressor(PUMP_ID);
 
         solenoidList = new ArrayList<>();
-
     }
 
-
-
     @Override
-
     protected void initDefaultCommand() {
 
         c.setClosedLoopControl(true);
-
     }
-
-
 
     public void start(){
 
         c.setClosedLoopControl(true);
-
     }
-
-
 
     public void stop(){
 
         c.setClosedLoopControl(false);
-
     }
-
-
 
     public void createSolenoid(int solenoidId, int id1, int id2){
 
@@ -67,18 +52,13 @@ public class Pneumatics extends Subsystem {
 
     }
 
-
-
     public void solenoidOff(int solenoidId){
-
         try {
-
             DoubleSolenoid ds = solenoidList.get(solenoidId);
 
             if(ds != null){
 
                 ds.set(DoubleSolenoid.Value.kOff);
-
             }
 
         } catch(IndexOutOfBoundsException e){
@@ -86,12 +66,8 @@ public class Pneumatics extends Subsystem {
             System.out.println(e);
 
             return;
-
         }
-
     }
-
-
 
     public void solenoidForward(int solenoidId){
 
@@ -104,7 +80,6 @@ public class Pneumatics extends Subsystem {
                 ds.set(DoubleSolenoid.Value.kForward);
 
                 SHIFTSTATE = true;
-
             }
 
         } catch(IndexOutOfBoundsException e){
@@ -112,12 +87,9 @@ public class Pneumatics extends Subsystem {
             System.out.println(e);
 
             return;
-
         }
 
     }
-
-
 
     public void solenoidReverse(int solenoidId){
 
@@ -140,17 +112,12 @@ public class Pneumatics extends Subsystem {
             System.out.println(e);
 
             return;
-
         }
-
     }
-
-
 
     public boolean getShiftState(){
 
         return SHIFTSTATE;
-
     }
 
     public boolean getOpenState() {

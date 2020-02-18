@@ -1,6 +1,7 @@
-package frc.robot.subsystem.elevator;
+package frc.robot.subsystem;
 
 import frc.robot.Robot;
+import frc.robot.Constants.ElevatorConstants.ElevatorStage;
 import frc.robot.subsystem.Refreshable;
 import frc.robot.util.Loggable;
 import frc.robot.util.RobotMath;
@@ -15,22 +16,22 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
 
     private ElevatorStage currentStage = ElevatorStage.BOTTOM;
 
-    //motor ports
+    // motor ports
     private static int FIRST_MOTOR_PORT = 4;
     private static int SECOND_MOTOR_PORT = 5;
 
-    //encoder ports/channels
+    // encoder ports/channels
     private static int ELEVATOR_ENCODER_CHANNEL_A = 0;
     private static int ELEVATOR_ENCODER_CHANNEL_B = 1;
 
     private static boolean FORWARD_DIRECTION, REVERSE_DIRECTION;
     private static CounterBase.EncodingType ENCODER_TYPE;
 
-    //encoder mapping
+    // encoder mapping
     private static int COUNTS_PER_REVOLUTION;
     private static double WHEEL_RADIUS;
 
-    //limit switch mapping
+    // limit switch mapping
     private static int LIMIT_SWITCH_BOTTOM;
 
     static {
@@ -40,24 +41,24 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
 
         ENCODER_TYPE = CounterBase.EncodingType.k1X;
         COUNTS_PER_REVOLUTION = 2048;
-        WHEEL_RADIUS = 47.75; //in mm
+        WHEEL_RADIUS = 47.75; // in mm
 
-        LIMIT_SWITCH_BOTTOM = 2;    //DIO = 2
+        LIMIT_SWITCH_BOTTOM = 2; // DIO = 2
     }
 
-    //elevator
-    //motors
+    // elevator
+    // motors
     private Spark firstMotor;
     private Spark secondMotor;
 
-    //encoder
+    // encoder
     private Encoder elevatorEncoder;
-    //driver controller
+    // driver controller
     private XboxController controller;
 
     public Elevator() {
 
-        //initialize hardware
+        // initialize hardware
         firstMotor = new Spark(FIRST_MOTOR_PORT);
         secondMotor = new Spark(SECOND_MOTOR_PORT);
         initializeEncoders();
@@ -66,25 +67,25 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
 
     @Override
     public void refresh() {
-        //run elevator code here
-        //incase encoders stop working
+        // run elevator code here
+        // incase encoders stop working
         joystickControl(controller);
     }
 
-    public void joystickControl(XboxController controller){
-        if(Math.abs(controller.LeftStick.Y) >= 0.1) {
+    public void joystickControl(XboxController controller) {
+        if (Math.abs(controller.LeftStick.Y) >= 0.1) {
             setMotorsSpeed(-controller.LeftStick.Y);
         }
     }
 
-    public void setMotorsSpeed(double i){
+    public void setMotorsSpeed(double i) {
         firstMotor.set(i);
         secondMotor.set(i);
     }
 
     @Override
     public void log() {
-       // SmartDashboard.putNumber("Elevator motor", ???? );
+        // SmartDashboard.putNumber("Elevator motor", ???? );
         SmartDashboard.putNumber("Elevator/Lift Distance", getDistance());
     }
 
@@ -110,9 +111,7 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
     }
 
     private void initializeEncoders() {
-        elevatorEncoder = new Encoder(ELEVATOR_ENCODER_CHANNEL_A,
-                ELEVATOR_ENCODER_CHANNEL_B,
-                REVERSE_DIRECTION,
+        elevatorEncoder = new Encoder(ELEVATOR_ENCODER_CHANNEL_A, ELEVATOR_ENCODER_CHANNEL_B, REVERSE_DIRECTION,
                 ENCODER_TYPE);
 
         final double encoderLinearDistancePerPulse = RobotMath.getDistancePerPulse(COUNTS_PER_REVOLUTION, WHEEL_RADIUS);
@@ -126,13 +125,6 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
 
     public void setStage(ElevatorStage currentStage) {
         this.currentStage = currentStage;
-    }
 
-    public enum ElevatorStage {
-        BOTTOM,
-        MIDDLE,
-        TOP
     }
 }
-
-

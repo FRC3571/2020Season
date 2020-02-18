@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.FollowBall;
+import frc.robot.commands.LiftCommand;
 import frc.robot.commands.OpenCloseCommand;
 import frc.robot.commands.auto.PracticeAuto;
 import frc.robot.component.ColorSensor;
@@ -18,10 +19,7 @@ import frc.robot.component.Vision;
 import frc.robot.subsystem.DriveTrain;
 import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Pneumatics;
-import frc.robot.subsystem.Tilt;
-import frc.robot.subsystem.elevator.Elevator;
-import frc.robot.subsystem.elevator.LiftCommand;
-import frc.robot.util.RioDuino;
+import frc.robot.subsystem.Elevator;
 import frc.robot.util.XboxController;
 
 public class Robot extends TimedRobot
@@ -29,10 +27,8 @@ public class Robot extends TimedRobot
     private DriveTrain driveTrain;
     private Elevator elevator;
     private Intake intake;
-    private Tilt tilt;
     private Pneumatics pneumatics;
     private Logger logger;
-    private RioDuino rioDuino;
     //private CameraController cameraController;
     private ColorSensor colorSensor;
     private XboxController subsystemController;
@@ -55,11 +51,8 @@ public class Robot extends TimedRobot
         driveTrain = new DriveTrain();
         elevator = new Elevator();
         intake = new Intake();
-        tilt = new Tilt();
 
         logger = Logger.getLogger(getClass().getName());
-
-        rioDuino = new RioDuino();
 
         navx = new NAVX();
 
@@ -98,7 +91,6 @@ public class Robot extends TimedRobot
         // driveTrain.refresh();
         elevator.refresh();
         intake.refresh();
-        tilt.refresh();
 
         colorSensor.matchedColor();
         subsystemController.refresh();
@@ -117,41 +109,17 @@ public class Robot extends TimedRobot
 
     @Override
     public void testPeriodic() {
-        new Thread() {
-            @Override
-            public void start() {
-                while (true) {
-                    System.out.println(rioDuino.receiveData());
-                    for (final byte b : rioDuino.getRaw()) {
-                        System.out.print(" " + (int) b);
-                    }
-                    try {
-                        sleep(250);
-                    } catch (final InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }.start();
     }
 
     private void debug() {
         driveTrain.log();
         elevator.log();
         intake.log();
-        tilt.log();
         visionProcessor.log();
         navx.log();
     }
 
     private void initController() {
-        // subsystemController.Buttons.Y.runCommand(new ClimbCommand(),
-        // XboxController.CommandState.WhenPressed);
-        // subsystemController.Buttons.LB.runCommand(new LiftCommand(true),
-        // XboxController.CommandState.WhenPressed);
-        // subsystemController.Buttons.RB.runCommand(new LiftCommand(false),
-        // XboxController.CommandState.WhenPressed);
-
         // climbing
         subsystemController.Buttons.Y.bindCommand(new ClimbCommand(), XboxController.CommandState.WhenPressed);
 
@@ -222,10 +190,6 @@ public class Robot extends TimedRobot
 
     public Intake getIntake() {
         return intake;
-    }
-
-    public Tilt getTilt() {
-        return tilt;
     }
 
     public Elevator getElevator() {

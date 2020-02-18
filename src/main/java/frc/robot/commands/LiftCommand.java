@@ -1,8 +1,8 @@
-package frc.robot.subsystem.elevator;
+package frc.robot.commands;
 
-import frc.robot.Robot;
-import frc.robot.subsystem.elevator.Elevator.ElevatorStage;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.Constants.ElevatorConstants.ElevatorStage;
+import frc.robot.Robot;
 
 public class LiftCommand extends Command {
 
