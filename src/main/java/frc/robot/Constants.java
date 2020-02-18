@@ -40,5 +40,9 @@ public final class Constants {
 
     public static final class RobotConstants {
         public static final int kController = 1;
+
+        public enum ColorAssignment {
+            RED, YELLOW, GREEN, BLUE, NONE
+        }
     }
 }

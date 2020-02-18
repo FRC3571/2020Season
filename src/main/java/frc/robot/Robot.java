@@ -21,22 +21,21 @@ import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Pneumatics;
 import frc.robot.subsystem.Elevator;
 import frc.robot.util.XboxController;
+import frc.robot.Constants.RobotConstants.ColorAssignment;
 
-public class Robot extends TimedRobot
-{
+public class Robot extends TimedRobot {
     private DriveTrain driveTrain;
     private Elevator elevator;
     private Intake intake;
     private Pneumatics pneumatics;
     private Logger logger;
-    //private CameraController cameraController;
     private ColorSensor colorSensor;
     private XboxController subsystemController;
     private PowerDistributionPanel pdp;
     private NAVX navx;
     private static Robot exposedInstance;
     private Vision visionProcessor;
-    private colorAssignment colorAssignment;
+    private ColorAssignment colorAssignment;
     private String gameData;
     CommandGroup auto;
 
@@ -134,25 +133,21 @@ public class Robot extends TimedRobot
         subsystemController.Buttons.RB.bindCommand(new LiftCommand(false), XboxController.CommandState.WhenPressed);
     }
 
-    private enum colorAssignment {
-        RED, YELLOW, GREEN, BLUE, NONE
-    }
-
     private void getColorAssignment() {
         gameData = DriverStation.getInstance().getGameSpecificMessage();
         if (gameData.length() > 0) {
             switch (gameData.charAt(0)) {
             case 'B':
-                colorAssignment = colorAssignment.BLUE;
+                colorAssignment = ColorAssignment.BLUE;
                 break;
             case 'G':
-                colorAssignment = colorAssignment.GREEN;
+                colorAssignment = ColorAssignment.GREEN;
                 break;
             case 'R':
-                colorAssignment = colorAssignment.RED;
+                colorAssignment = ColorAssignment.RED;
                 break;
             case 'Y':
-                colorAssignment = colorAssignment.YELLOW;
+                colorAssignment = ColorAssignment.YELLOW;
                 break;
             default:
                 // This is corrupt data
