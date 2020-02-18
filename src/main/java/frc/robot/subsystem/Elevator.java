@@ -2,7 +2,7 @@ package frc.robot.subsystem;
 
 import frc.robot.Robot;
 import frc.robot.Constants.ElevatorConstants.ElevatorStage;
-import frc.robot.subsystem.Refreshable;
+import frc.robot.util.Refreshable;
 import frc.robot.util.Loggable;
 import frc.robot.util.RobotMath;
 import frc.robot.util.XboxController;

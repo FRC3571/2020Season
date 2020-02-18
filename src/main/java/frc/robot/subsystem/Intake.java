@@ -2,6 +2,7 @@ package frc.robot.subsystem;
 
 import frc.robot.Robot;
 import frc.robot.util.Loggable;
+import frc.robot.util.Refreshable;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
 

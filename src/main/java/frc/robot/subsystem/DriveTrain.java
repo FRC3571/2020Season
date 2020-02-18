@@ -4,6 +4,7 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants.DriveMode;
 import frc.robot.Constants.DriveConstants.Gear;
+import frc.robot.util.Refreshable;
 import frc.robot.commands.ChangeGear;
 import frc.robot.commands.DriveJoystick;
 import frc.robot.commands.SetPosition;
