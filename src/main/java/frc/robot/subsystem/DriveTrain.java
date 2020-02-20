@@ -1,9 +1,6 @@
 package frc.robot.subsystem;
 
-import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.Constants.DriveConstants.DriveMode;
-import frc.robot.Constants.DriveConstants.Gear;
 import frc.robot.util.Refreshable;
 import frc.robot.commands.ChangeGear;
 import frc.robot.commands.DriveJoystick;
@@ -23,7 +20,31 @@ import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANEncoder;
 
 public class DriveTrain extends Subsystem implements Loggable, Refreshable {
-    
+
+        private static final int kController = 0;
+
+        private static final double kGearRatioLow = 4.6;
+        private static final double kGearRatioHigh = 2.7;
+
+        private static final int kLeftLeadID = 10;
+        private static final int kLeftFollowID = 11;
+        private static final int kRightLeadID = 20;
+        private static final int kRightFollowID = 21;
+
+        private static final double kGearRatioFirst = 0.3;
+        private static final double kGearRatioSecond = 0.4;
+        private static final double kGearRatioThird = 0.5;
+
+        // Drive Modes
+        public enum DriveMode {
+            AONEJOY, ATWOJOY, TANK,
+        }
+
+        // Gears (Speeds)
+        public enum Gear {
+            FIRST, SECOND, THIRD, FOURTH,
+        }
+
     public DriveMode ChosenDrive;
     private Gear ChosenGear;
     private SendableChooser<DriveMode> DriveModeChooser;
@@ -54,17 +75,17 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
         setDefaultCommand(new DriveJoystick(controller));
     }
 
-    public DriveTrain() {
+	public DriveTrain() {
 
         ChosenDrive = DriveMode.ATWOJOY;
         ChosenGear = Gear.THIRD;
         DriveModeChooser = new SendableChooser<>();
 
         // initialize hardware
-        rightL = new CANSparkMax(Constants.DriveConstants.kRightLeadID, MotorType.kBrushless);
-        leftL = new CANSparkMax(Constants.DriveConstants.kLeftLeadID, MotorType.kBrushless);
-        rightF = new CANSparkMax(Constants.DriveConstants.kRightFollowID, MotorType.kBrushless);
-        leftF = new CANSparkMax(Constants.DriveConstants.kLeftFollowID, MotorType.kBrushless);
+        rightL = new CANSparkMax(kRightLeadID, MotorType.kBrushless);
+        leftL = new CANSparkMax(kLeftLeadID, MotorType.kBrushless);
+        rightF = new CANSparkMax(kRightFollowID, MotorType.kBrushless);
+        leftF = new CANSparkMax(kLeftFollowID, MotorType.kBrushless);
 
         leftL.restoreFactoryDefaults();
         rightL.restoreFactoryDefaults();
@@ -94,14 +115,14 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
 
     public void arcadeDrive(double throttle, double rotate) {
         if (ChosenGear == Gear.FIRST) {
-            throttle *= Constants.DriveConstants.kGearRatioFirst;
-            rotate *= Constants.DriveConstants.kGearRatioFirst;
+            throttle *= kGearRatioFirst;
+            rotate *= kGearRatioFirst;
         } else if (ChosenGear == Gear.SECOND) {
-            throttle *= Constants.DriveConstants.kGearRatioSecond;
-            rotate *= Constants.DriveConstants.kGearRatioSecond;
+            throttle *= kGearRatioSecond;
+            rotate *= kGearRatioSecond;
         } else if (ChosenGear == Gear.THIRD) {
-            throttle *= Constants.DriveConstants.kGearRatioThird;
-            rotate *= Constants.DriveConstants.kGearRatioThird;
+            throttle *= kGearRatioThird;
+            rotate *= kGearRatioThird;
         }
 
         SmartDashboard.putNumber("DriveTrain/Drive/ArcadeDrive/Throttle", throttle);
@@ -113,14 +134,14 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
 
     public void tankdrive(double left, double right) {
         if (ChosenGear == Gear.FIRST) {
-            left *= Constants.DriveConstants.kGearRatioFirst;
-            right *= Constants.DriveConstants.kGearRatioFirst;
+            left *= kGearRatioFirst;
+            right *= kGearRatioFirst;
         } else if (ChosenGear == Gear.SECOND) {
-            left *= Constants.DriveConstants.kGearRatioSecond;
-            right *= Constants.DriveConstants.kGearRatioSecond;
+            left *= kGearRatioSecond;
+            right *= kGearRatioSecond;
         } else if (ChosenGear == Gear.THIRD) {
-            left *= Constants.DriveConstants.kGearRatioThird;
-            right *= Constants.DriveConstants.kGearRatioThird;
+            left *= kGearRatioThird;
+            right *= kGearRatioThird;
         }
 
         SmartDashboard.putNumber("DriveTrain/Drive/TankDrive/Left", left);
@@ -236,7 +257,7 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     }
 
     private void initController(){
-        controller = new XboxController(Constants.DriveConstants.kController);
+        controller = new XboxController(kController);
         
         controller.Buttons.X.bindCommand(new ChangeGear(1), XboxController.CommandState.WhenPressed);
         controller.Buttons.Y.bindCommand(new ChangeGear(2), XboxController.CommandState.WhenPressed);
@@ -280,4 +301,8 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     public void setChosenGear(Gear chosenGear) {
         this.ChosenGear = chosenGear;
     }
+
+    public static double getKgearratiolow() {
+		return kGearRatioLow;
+	}
 }

@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.Robot;
-import frc.robot.Constants.DriveConstants.Gear;
+import frc.robot.subsystem.DriveTrain;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -16,16 +16,16 @@ public class ChangeGear extends Command {
     protected void initialize() {
         switch (gear) {
             case 1:
-                Robot.getInstance().getDrive().setChosenGear(Gear.FIRST);
+                Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.FIRST);
                 break;
             case 2:
-                Robot.getInstance().getDrive().setChosenGear(Gear.SECOND);
+                Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.SECOND);
                 break;
             case 3:
-                Robot.getInstance().getDrive().setChosenGear(Gear.THIRD);
+                Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.THIRD);
                 break;
             case 4:
-                Robot.getInstance().getDrive().setChosenGear(Gear.FOURTH);
+                Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.FOURTH);
                 break;
             default:
                 break;

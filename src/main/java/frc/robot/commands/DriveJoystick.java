@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import frc.robot.Robot;
-import frc.robot.Constants.DriveConstants.DriveMode;
 import frc.robot.subsystem.DriveTrain;
 import frc.robot.util.XboxController;
 import edu.wpi.first.wpilibj.command.Command;
@@ -20,11 +19,11 @@ public class DriveJoystick extends Command {
 
     @Override
     protected void execute() {
-        if (driveTrain.ChosenDrive == DriveMode.AONEJOY) {
+        if (driveTrain.ChosenDrive == DriveTrain.DriveMode.AONEJOY) {
             driveTrain.arcadeDrive(controller.RightStick.Y, -controller.RightStick.X);
-        } else if (driveTrain.ChosenDrive == DriveMode.ATWOJOY) {
+        } else if (driveTrain.ChosenDrive == DriveTrain.DriveMode.ATWOJOY) {
             driveTrain.arcadeDrive(controller.LeftStick.Y, -controller.RightStick.X);
-        } else if (driveTrain.ChosenDrive == DriveMode.TANK) {
+        } else if (driveTrain.ChosenDrive == DriveTrain.DriveMode.TANK) {
             driveTrain.tankdrive(controller.LeftStick.Y, controller.RightStick.Y);
         }
     }

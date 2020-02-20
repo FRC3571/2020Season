@@ -21,9 +21,15 @@ import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Pneumatics;
 import frc.robot.subsystem.Elevator;
 import frc.robot.util.XboxController;
-import frc.robot.Constants.RobotConstants.ColorAssignment;
 
 public class Robot extends TimedRobot {
+
+    public static final int kController = 1;
+
+        public enum ColorAssignment {
+            RED, YELLOW, GREEN, BLUE, NONE
+        }
+        
     private DriveTrain driveTrain;
     private Elevator elevator;
     private Intake intake;
@@ -44,7 +50,7 @@ public class Robot extends TimedRobot {
         exposedInstance = this;
 
         pdp = new PowerDistributionPanel();
-        subsystemController = new XboxController(Constants.RobotConstants.kController);
+        subsystemController = new XboxController(kController);
 
         pneumatics = new Pneumatics();
         driveTrain = new DriveTrain();

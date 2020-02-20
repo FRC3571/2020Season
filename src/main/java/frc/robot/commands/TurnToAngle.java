@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.Robot;
-import frc.robot.Constants.DriveConstants.Gear;
+import frc.robot.subsystem.DriveTrain;
 import frc.robot.util.RobotMath;
 
 import edu.wpi.first.wpilibj.PIDController;
@@ -64,7 +64,7 @@ public class TurnToAngle extends Command implements PIDOutput {
     protected void initialize() {
         Robot.getInstance().getDrive().reset();
 
-        Robot.getInstance().getDrive().setChosenGear(Gear.FOURTH);
+        Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.THIRD);
 
         turnController.enable();
     }
@@ -90,7 +90,7 @@ public class TurnToAngle extends Command implements PIDOutput {
     @Override
     protected void end() {
         Robot.getInstance().getDrive().arcadeDrive(0, 0);
-        Robot.getInstance().getDrive().setChosenGear(Gear.SECOND);
+        Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.SECOND);
         turnController.disable();
     }
 

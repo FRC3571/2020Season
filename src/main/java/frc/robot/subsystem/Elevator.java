@@ -1,7 +1,6 @@
 package frc.robot.subsystem;
 
 import frc.robot.Robot;
-import frc.robot.Constants.ElevatorConstants.ElevatorStage;
 import frc.robot.util.Refreshable;
 import frc.robot.util.Loggable;
 import frc.robot.util.RobotMath;
@@ -13,6 +12,12 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Elevator extends Subsystem implements Loggable, Refreshable {
+
+    public enum ElevatorStage {
+        BOTTOM,
+        MIDDLE,
+        TOP
+    }
 
     private ElevatorStage currentStage = ElevatorStage.BOTTOM;
 

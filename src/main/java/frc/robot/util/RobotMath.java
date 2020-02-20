@@ -1,7 +1,7 @@
 package frc.robot.util;
 
-import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.subsystem.DriveTrain;
 
 public class RobotMath {
 
@@ -13,7 +13,7 @@ public class RobotMath {
      */
     public static double getDistancePerPulse(final double countsPerRevolution, final double wheelRadius) {
         final double encoderAngularDistancePerPulse = 2.0*Math.PI/countsPerRevolution;
-        return (wheelRadius * encoderAngularDistancePerPulse)/Constants.DriveConstants.kGearRatioLow;
+        return (wheelRadius * encoderAngularDistancePerPulse)/DriveTrain.getKgearratiolow();
     }
 
     public static double getDistanceFromDegrees(double degrees, double turnRadius) {
