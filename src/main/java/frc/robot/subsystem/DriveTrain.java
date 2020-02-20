@@ -105,7 +105,6 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
         rightF.setInverted(true);
 
         arcadeDrive(0, 0);
-        drive.setSafetyEnabled(false);
 
         xPos = 0;
         yPos = 0;
