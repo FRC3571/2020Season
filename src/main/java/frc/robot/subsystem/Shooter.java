@@ -26,6 +26,8 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
 
         firstMotor.restoreFactoryDefaults();
         secondMotor.restoreFactoryDefaults();
+
+        initEncoders();
         
     }
 
@@ -47,5 +49,9 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
 
     }
 
+    private void initEncoders() {
+        firstEncoder = firstMotor.getEncoder();
+        secondEncoder = secondMotor.getEncoder();
+    }
 
 }

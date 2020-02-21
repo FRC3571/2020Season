@@ -14,9 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Elevator extends Subsystem implements Loggable, Refreshable {
 
     public enum ElevatorStage {
-        BOTTOM,
-        MIDDLE,
-        TOP
+        BOTTOM, MIDDLE, TOP
     }
 
     private ElevatorStage currentStage = ElevatorStage.BOTTOM;

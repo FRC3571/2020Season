@@ -26,10 +26,10 @@ public class Robot extends TimedRobot {
 
     public static final int kController = 1;
 
-        public enum ColorAssignment {
-            RED, YELLOW, GREEN, BLUE, NONE
-        }
-        
+    public enum ColorAssignment {
+        RED, YELLOW, GREEN, BLUE, NONE
+    }
+
     private DriveTrain driveTrain;
     private Elevator elevator;
     private Intake intake;
@@ -87,12 +87,13 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        if (auto != null) auto.close();
+        if (auto != null)
+            auto.close();
     }
 
     @Override
     public void teleopPeriodic() {
-        
+
         // driveTrain.refresh();
         elevator.refresh();
         intake.refresh();
@@ -165,7 +166,7 @@ public class Robot extends TimedRobot {
     public void log(final Level logLevel, final String message) {
         logger.log(logLevel, message);
     }
-    
+
     public static Robot getInstance() {
         if (exposedInstance == null) {
             throw new IllegalStateException("#robotInit must finish its invocation!");
@@ -176,7 +177,7 @@ public class Robot extends TimedRobot {
     public Vision getVisionProcessor() {
         return visionProcessor;
     }
-    
+
     public XboxController getSubsystemController() {
         return subsystemController;
     }
