@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Pneumatics extends Subsystem {
 
-    final private static int PUMP_ID = 0;
+    final private static int kPumpID = 0;
 
     Compressor c;
 
@@ -21,7 +21,7 @@ public class Pneumatics extends Subsystem {
     
     public Pneumatics(){
 
-        c = new Compressor(PUMP_ID);
+        c = new Compressor(kPumpID);
 
         solenoidList = new ArrayList<>();
     }

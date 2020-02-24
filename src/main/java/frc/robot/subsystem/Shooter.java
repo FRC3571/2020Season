@@ -44,14 +44,14 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
         SmartDashboard.putNumber("Shooter/BottomMotor/Speed", bottomMotor.get());
     }
 
-    public void setMotors(double topSpeed, double bottomSpeed) {
-        topMotor.set(topSpeed);
-        bottomMotor.set(bottomSpeed);
-    }
-
     @Override
     protected void initDefaultCommand() {
         setDefaultCommand(new ManualShoot());
+    }
+
+    public void setMotors(double topSpeed, double bottomSpeed) {
+        topMotor.set(topSpeed);
+        bottomMotor.set(bottomSpeed);
     }
 
     private void initEncoders() {

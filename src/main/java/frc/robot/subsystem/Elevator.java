@@ -20,8 +20,8 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
     private ElevatorStage currentStage = ElevatorStage.BOTTOM;
 
     // motor ports
-    private static int FIRST_MOTOR_PORT = 4;
-    private static int SECOND_MOTOR_PORT = 5;
+    private static int kFirstMotorPort = 4;
+    private static int kSecondMotorPort = 5;
 
     // encoder ports/channels
     private static int ELEVATOR_ENCODER_CHANNEL_A = 0;
@@ -62,8 +62,8 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
     public Elevator() {
 
         // initialize hardware
-        firstMotor = new Spark(FIRST_MOTOR_PORT);
-        secondMotor = new Spark(SECOND_MOTOR_PORT);
+        firstMotor = new Spark(kFirstMotorPort);
+        secondMotor = new Spark(kSecondMotorPort);
         initializeEncoders();
         controller = Robot.getInstance().getSubsystemController();
     }
