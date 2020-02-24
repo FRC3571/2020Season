@@ -11,7 +11,7 @@ public class ManualShoot extends Command {
     private XboxController controller;
     private double speed;
 
-    public ManualShoot(){
+    public ManualShoot() {
         this.shooter = Robot.getInstance().getShooter();
         this.controller = Robot.getInstance().getSubsystemController();
         this.speed = speed;
@@ -22,7 +22,6 @@ public class ManualShoot extends Command {
     @Override
     protected void execute() {
         speed = controller.RightStick.Y;
-
         shooter.setMotors(speed);
     }
 
@@ -35,5 +34,4 @@ public class ManualShoot extends Command {
     protected void end() {
         shooter.setMotors(0);
     }
-
 }

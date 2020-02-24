@@ -19,9 +19,7 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
     private CANEncoder leftEncoder;
     private CANEncoder rightEncoder;
 
-    public Shooter(){
-
-        // initialize hardware
+    public Shooter() {
         leftMotor = new CANSparkMax(kLeftMotorID, MotorType.kBrushless);
         rightMotor = new CANSparkMax(kRightMotorID, MotorType.kBrushless);
 
@@ -32,7 +30,6 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
         leftMotor.setInverted(true);
 
         initEncoders();
-        
     }
 
     @Override
@@ -47,7 +44,7 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
 
     }
 
-    public void setMotors(double speed){
+    public void setMotors(double speed) {
         leftMotor.set(speed);
         rightMotor.set(speed);
     }
@@ -61,5 +58,4 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
         leftEncoder = leftMotor.getEncoder();
         rightEncoder = rightMotor.getEncoder();
     }
-
 }
