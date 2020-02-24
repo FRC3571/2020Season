@@ -19,6 +19,7 @@ import frc.robot.component.Vision;
 import frc.robot.subsystem.DriveTrain;
 import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Pneumatics;
+import frc.robot.subsystem.Shooter;
 import frc.robot.subsystem.Elevator;
 import frc.robot.util.XboxController;
 
@@ -33,6 +34,7 @@ public class Robot extends TimedRobot {
     private DriveTrain driveTrain;
     private Elevator elevator;
     private Intake intake;
+    private Shooter shooter;
     private Pneumatics pneumatics;
     private Logger logger;
     private ColorSensor colorSensor;
@@ -55,6 +57,7 @@ public class Robot extends TimedRobot {
         pneumatics = new Pneumatics();
         driveTrain = new DriveTrain();
         elevator = new Elevator();
+        shooter = new Shooter();
         intake = new Intake();
 
         logger = Logger.getLogger(getClass().getName());
@@ -134,7 +137,7 @@ public class Robot extends TimedRobot {
         subsystemController.Buttons.B.bindCommand(new FollowBall(), XboxController.CommandState.WhenPressed);
         // subsystemController.Buttons.B.runCommand(new TiltCommand(),
         // XboxController.CommandState.WhenPressed);
-
+        
         // elevator
         subsystemController.Buttons.LB.bindCommand(new LiftCommand(true), XboxController.CommandState.WhenPressed);
         subsystemController.Buttons.RB.bindCommand(new LiftCommand(false), XboxController.CommandState.WhenPressed);
@@ -196,6 +199,10 @@ public class Robot extends TimedRobot {
 
     public Elevator getElevator() {
         return elevator;
+    }
+
+    public Shooter getShooter() {
+        return shooter;
     }
 
     public PowerDistributionPanel getPowerData() {

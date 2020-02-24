@@ -5,27 +5,31 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.commands.ManualShoot;
 import frc.robot.util.Loggable;
 import frc.robot.util.Refreshable;
 
 public class Shooter extends Subsystem implements Loggable, Refreshable {
-    private static final int kFirstMotorID = 30;
-    private static final int kSecondMotorID = 31;
+    private static final int kLeftMotorID = 30;
+    private static final int kRightMotorID = 31;
 
-    private CANSparkMax firstMotor;
-    private CANSparkMax secondMotor;
+    private CANSparkMax leftMotor;
+    private CANSparkMax rightMotor;
 
-    private CANEncoder firstEncoder;
-    private CANEncoder secondEncoder;
+    private CANEncoder leftEncoder;
+    private CANEncoder rightEncoder;
 
     public Shooter(){
 
         // initialize hardware
-        firstMotor = new CANSparkMax(kFirstMotorID, MotorType.kBrushless);
-        secondMotor = new CANSparkMax(kSecondMotorID, MotorType.kBrushless);
+        leftMotor = new CANSparkMax(kLeftMotorID, MotorType.kBrushless);
+        rightMotor = new CANSparkMax(kRightMotorID, MotorType.kBrushless);
 
-        firstMotor.restoreFactoryDefaults();
-        secondMotor.restoreFactoryDefaults();
+        leftMotor.restoreFactoryDefaults();
+        rightMotor.restoreFactoryDefaults();
+
+        leftMotor.setInverted(false);
+        leftMotor.setInverted(true);
 
         initEncoders();
         
@@ -43,15 +47,19 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
 
     }
 
+    public void setMotors(double speed){
+        leftMotor.set(speed);
+        rightMotor.set(speed);
+    }
+
     @Override
     protected void initDefaultCommand() {
-        // TODO Auto-generated method stub
-
+        setDefaultCommand(new ManualShoot());
     }
 
     private void initEncoders() {
-        firstEncoder = firstMotor.getEncoder();
-        secondEncoder = secondMotor.getEncoder();
+        leftEncoder = leftMotor.getEncoder();
+        rightEncoder = rightMotor.getEncoder();
     }
 
 }
