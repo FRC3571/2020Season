@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ManualShoot;
 import frc.robot.util.Loggable;
 import frc.robot.util.Refreshable;
@@ -39,8 +40,8 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
 
     @Override
     public void log() {
-        System.out.println("Top Speed is " + topMotor.get());
-        System.out.println("Bottom Speed is " + bottomMotor.get());
+        SmartDashboard.putNumber("Shooter/TopMotor/Speed", topMotor.get());
+        SmartDashboard.putNumber("Shooter/BottomMotor/Speed", bottomMotor.get());
     }
 
     public void setMotors(double topSpeed, double bottomSpeed) {
