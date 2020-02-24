@@ -10,43 +10,42 @@ import frc.robot.util.Loggable;
 import frc.robot.util.Refreshable;
 
 public class Shooter extends Subsystem implements Loggable, Refreshable {
-    private static final int kLeftMotorID = 30;
-    private static final int kRightMotorID = 31;
+    private static final int kTopMotorID = 13;
+    private static final int kBottomMotorID = 23;
 
-    private CANSparkMax leftMotor;
-    private CANSparkMax rightMotor;
+    private CANSparkMax topMotor;
+    private CANSparkMax bottomMotor;
 
-    private CANEncoder leftEncoder;
-    private CANEncoder rightEncoder;
+    private CANEncoder topEncoder;
+    private CANEncoder bottomEncoder;
 
     public Shooter() {
-        leftMotor = new CANSparkMax(kLeftMotorID, MotorType.kBrushless);
-        rightMotor = new CANSparkMax(kRightMotorID, MotorType.kBrushless);
+        topMotor = new CANSparkMax(kTopMotorID, MotorType.kBrushless);
+        bottomMotor = new CANSparkMax(kBottomMotorID, MotorType.kBrushless);
 
-        leftMotor.restoreFactoryDefaults();
-        rightMotor.restoreFactoryDefaults();
+        topMotor.restoreFactoryDefaults();
+        bottomMotor.restoreFactoryDefaults();
 
-        leftMotor.setInverted(false);
-        leftMotor.setInverted(true);
+        topMotor.setInverted(false);
+        bottomMotor.setInverted(true);
 
         initEncoders();
     }
 
     @Override
     public void refresh() {
-        // TODO Auto-generated method stub
-
+        
     }
 
     @Override
     public void log() {
-        // TODO Auto-generated method stub
-
+        System.out.println("Top Speed is " + topMotor.get());
+        System.out.println("Bottom Speed is " + bottomMotor.get());
     }
 
-    public void setMotors(double speed) {
-        leftMotor.set(speed);
-        rightMotor.set(speed);
+    public void setMotors(double topSpeed, double bottomSpeed) {
+        topMotor.set(topSpeed);
+        bottomMotor.set(bottomSpeed);
     }
 
     @Override
@@ -55,7 +54,7 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
     }
 
     private void initEncoders() {
-        leftEncoder = leftMotor.getEncoder();
-        rightEncoder = rightMotor.getEncoder();
+        topEncoder = topMotor.getEncoder();
+        bottomEncoder = bottomMotor.getEncoder();
     }
 }

@@ -72,7 +72,7 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
     public void refresh() {
         // run elevator code here
         // incase encoders stop working
-        joystickControl(controller);
+        //joystickControl(controller);
     }
 
     public void joystickControl(XboxController controller) {
