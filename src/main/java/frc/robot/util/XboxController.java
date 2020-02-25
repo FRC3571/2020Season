@@ -32,7 +32,7 @@ public class XboxController {
 	 *            Controller port
 	 */
 	public XboxController(int port) {
-		this(port, 0, 0);
+		this(port, CONTROLLER_DEADZONE, CONTROLLER_DEADZONE);
 	}
 
 	/**

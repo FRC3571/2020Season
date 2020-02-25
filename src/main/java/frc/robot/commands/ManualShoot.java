@@ -13,16 +13,13 @@ public class ManualShoot extends Command {
 
     public ManualShoot() {
         this.shooter = Robot.getInstance().getShooter();
-        this.controller = Robot.getInstance().getSubsystemController();
         setInterruptible(true);
         requires(shooter);
     }
 
     @Override
     protected void execute() {
-        topSpeed = controller.LeftStick.Y;
-        bottomSpeed = controller.RightStick.Y;
-        shooter.setMotors(topSpeed, bottomSpeed);
+        shooter.setMotors(shooter.getTopSpeed(), shooter.getBottomSpeed());
     }
 
     @Override

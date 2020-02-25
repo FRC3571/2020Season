@@ -20,6 +20,8 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
     private CANEncoder topEncoder;
     private CANEncoder bottomEncoder;
 
+    private double topSpeed, bottomSpeed;
+
     public Shooter() {
         topMotor = new CANSparkMax(kTopMotorID, MotorType.kBrushless);
         bottomMotor = new CANSparkMax(kBottomMotorID, MotorType.kBrushless);
@@ -33,7 +35,7 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
         initEncoders();
     }
 
-    @Override
+	@Override
     public void refresh() {
         
     }
@@ -46,7 +48,7 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
 
     @Override
     protected void initDefaultCommand() {
-        setDefaultCommand(new ManualShoot());
+        //setDefaultCommand(new ManualShoot());
     }
 
     public void setMotors(double topSpeed, double bottomSpeed) {
@@ -58,4 +60,20 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
         topEncoder = topMotor.getEncoder();
         bottomEncoder = bottomMotor.getEncoder();
     }
+
+    public double getBottomSpeed() {
+		return bottomSpeed;
+	}
+
+	public void setBottomSpeed(double bottomSpeed) {
+		this.bottomSpeed = bottomSpeed;
+	}
+
+	public double getTopSpeed() {
+		return topSpeed;
+	}
+
+	public void setTopSpeed(double topSpeed) {
+		this.topSpeed = topSpeed;
+	}
 }

@@ -8,9 +8,11 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import frc.robot.commands.ChangeShooterSpeed;
 import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.FollowBall;
 import frc.robot.commands.LiftCommand;
+import frc.robot.commands.ManualShoot;
 import frc.robot.commands.OpenCloseCommand;
 import frc.robot.commands.auto.PracticeAuto;
 import frc.robot.component.ColorSensor;
@@ -129,18 +131,25 @@ public class Robot extends TimedRobot {
     }
 
     private void initController() {
+        //Testing Shooter
+        subsystemController.Buttons.A.bindCommand(new ManualShoot(), XboxController.CommandState.WhilePressed);
+        subsystemController.Buttons.X.bindCommand(new ChangeShooterSpeed(1, shooter.getTopSpeed()+0.05), XboxController.CommandState.WhenPressed);
+        subsystemController.Buttons.B.bindCommand(new ChangeShooterSpeed(2, shooter.getBottomSpeed()+0.05), XboxController.CommandState.WhenPressed);
+        subsystemController.Buttons.Y.bindCommand(new ChangeShooterSpeed(0, 0), XboxController.CommandState.WhenPressed);
+        subsystemController.Buttons.LB.bindCommand(new ChangeShooterSpeed(1, shooter.getTopSpeed()+0.01), XboxController.CommandState.WhenPressed);
+        subsystemController.Buttons.RB.bindCommand(new ChangeShooterSpeed(2, shooter.getBottomSpeed()+0.01), XboxController.CommandState.WhenPressed);
         // climbing
-        subsystemController.Buttons.Y.bindCommand(new ClimbCommand(), XboxController.CommandState.WhenPressed);
+      //  subsystemController.Buttons.Y.bindCommand(new ClimbCommand(), XboxController.CommandState.WhenPressed);
 
         // intake
-        subsystemController.Buttons.A.bindCommand(new OpenCloseCommand(), XboxController.CommandState.WhenPressed);
-        subsystemController.Buttons.B.bindCommand(new FollowBall(), XboxController.CommandState.WhenPressed);
+       // subsystemController.Buttons.A.bindCommand(new OpenCloseCommand(), XboxController.CommandState.WhenPressed);
+        //subsystemController.Buttons.B.bindCommand(new FollowBall(), XboxController.CommandState.WhenPressed);
         // subsystemController.Buttons.B.runCommand(new TiltCommand(),
         // XboxController.CommandState.WhenPressed);
         
         // elevator
-        subsystemController.Buttons.LB.bindCommand(new LiftCommand(true), XboxController.CommandState.WhenPressed);
-        subsystemController.Buttons.RB.bindCommand(new LiftCommand(false), XboxController.CommandState.WhenPressed);
+        //subsystemController.Buttons.LB.bindCommand(new LiftCommand(true), XboxController.CommandState.WhenPressed);
+        //subsystemController.Buttons.RB.bindCommand(new LiftCommand(false), XboxController.CommandState.WhenPressed);
     }
 
     private void getColorAssignment() {
