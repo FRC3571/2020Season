@@ -1,38 +1,26 @@
 package frc.robot.subsystem;
 
-import frc.robot.Robot;
 import frc.robot.util.Loggable;
 import frc.robot.util.Refreshable;
-import edu.wpi.first.wpilibj.Spark;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Intake extends Subsystem implements Loggable, Refreshable {
 
-    private static int kFirstMotorPort = 0;
-    private static int kSecondMotorPort = 1;
+    private static int kMotorPort = 1;
 
-    private Spark firstMotor;
-    private Spark secondMotor;
+    private VictorSPX motor;
 
     public Intake() {
-        firstMotor = new Spark(kFirstMotorPort);
-        secondMotor = new Spark(kSecondMotorPort);
-
-        firstMotor.setInverted(false);
-        secondMotor.setInverted(true);
+        motor = new VictorSPX(kMotorPort);
     }
 
     @Override
     public void refresh() {
-        if(Math.abs(Robot.getInstance().getSubsystemController().Triggers.Left) > 0) {
-            firstMotor.setSpeed(Robot.getInstance().getSubsystemController().Triggers.Left);
-            secondMotor.setSpeed(Robot.getInstance().getSubsystemController().Triggers.Left);
-        }
-        
-        else {
-            firstMotor.setSpeed(-Robot.getInstance().getSubsystemController().Triggers.Right);
-            secondMotor.setSpeed(-Robot.getInstance().getSubsystemController().Triggers.Right);
-        }
+    
     }
 
     @Override
@@ -43,5 +31,9 @@ public class Intake extends Subsystem implements Loggable, Refreshable {
     @Override
     protected void initDefaultCommand() {
 
+    }
+
+    public void setMotor(double speed){
+        motor.set(ControlMode.PercentOutput, speed);
     }
 }
