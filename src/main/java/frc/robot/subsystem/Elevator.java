@@ -76,8 +76,8 @@ public class Elevator extends Subsystem implements Loggable, Refreshable {
     }
 
     public void joystickControl(XboxController controller) {
-        if (Math.abs(controller.LeftStick.Y) >= 0.1) {
-            setMotorsSpeed(-controller.LeftStick.Y);
+        if (Math.abs(controller.leftStick.getY()) >= 0.1) {
+            setMotorsSpeed(-controller.leftStick.getY());
         }
     }
 

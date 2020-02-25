@@ -26,9 +26,9 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     private static final double kGearRatioLow = 4.6;
     private static final double kGearRatioHigh = 2.7;
 
-    private static final int kLeftLeadID = 21;
+    private static final int kLeftLeadID = 23;
     private static final int kLeftFollowID = 22;
-    private static final int kRightLeadID = 11;
+    private static final int kRightLeadID = 13;
     private static final int kRightFollowID = 12;
 
     private static final double kGearRatioFirst = 0.3;
@@ -258,15 +258,15 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     private void initController() {
         controller = new XboxController(kController);
 
-        controller.Buttons.X.bindCommand(new ChangeGear(1), XboxController.CommandState.WhenPressed);
-        controller.Buttons.Y.bindCommand(new ChangeGear(2), XboxController.CommandState.WhenPressed);
-        controller.Buttons.B.bindCommand(new ChangeGear(3), XboxController.CommandState.WhenPressed);
-        controller.Buttons.A.bindCommand(new ChangeGear(4), XboxController.CommandState.WhenPressed);
+        controller.x.whenPressed(new ChangeGear(1));
+        controller.y.whenPressed(new ChangeGear(2));
+        controller.b.whenPressed(new ChangeGear(3));
+        controller.a.whenPressed(new ChangeGear(4));
     }
 
     @Override
     public void refresh() {
-        controller.refresh();
+        //controller.refresh();
     }
 
     public CANSparkMax getLeftL() {

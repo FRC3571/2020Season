@@ -102,9 +102,9 @@ public class Robot extends TimedRobot {
         // driveTrain.refresh();
         elevator.refresh();
         intake.refresh();
+        shooter.refresh();
 
         colorSensor.matchedColor();
-        subsystemController.refresh();
         visionProcessor.refresh();
         getColorAssignment();
         Scheduler.getInstance().run();
@@ -128,16 +128,16 @@ public class Robot extends TimedRobot {
         intake.log();
         visionProcessor.log();
         navx.log();
+        shooter.log();
     }
 
     private void initController() {
+        
+        
         //Testing Shooter
-        subsystemController.Buttons.A.bindCommand(new ManualShoot(), XboxController.CommandState.WhilePressed);
-        subsystemController.Buttons.X.bindCommand(new ChangeShooterSpeed(1, shooter.getTopSpeed()+0.05), XboxController.CommandState.WhenPressed);
-        subsystemController.Buttons.B.bindCommand(new ChangeShooterSpeed(2, shooter.getBottomSpeed()+0.05), XboxController.CommandState.WhenPressed);
-        subsystemController.Buttons.Y.bindCommand(new ChangeShooterSpeed(0, 0), XboxController.CommandState.WhenPressed);
-        subsystemController.Buttons.LB.bindCommand(new ChangeShooterSpeed(1, shooter.getTopSpeed()+0.01), XboxController.CommandState.WhenPressed);
-        subsystemController.Buttons.RB.bindCommand(new ChangeShooterSpeed(2, shooter.getBottomSpeed()+0.01), XboxController.CommandState.WhenPressed);
+        subsystemController.lb.whenPressed(new ChangeShooterSpeed(1, 0.1));
+
+
         // climbing
       //  subsystemController.Buttons.Y.bindCommand(new ClimbCommand(), XboxController.CommandState.WhenPressed);
 

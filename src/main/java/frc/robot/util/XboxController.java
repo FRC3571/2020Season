@@ -1,414 +1,710 @@
 package frc.robot.util;
 
-//https://github.com/owatonnarobotics/XboxController/blob/master/XboxController.java
+/* Imports */
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
-import edu.wpi.first.wpilibj.buttons.Trigger;
-import edu.wpi.first.wpilibj.command.Command;
-//import edu.wpi.first.hal.HAL;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import edu.wpi.first.wpilibj.DriverStation;
 
 /**
- * Handles Input from the Xbox Controller connected to the driver station.
+ * [class] XboxController
+ * @author AJ Granowski & 4624 Owatonna Robotics
+ * @version 2015
  * 
- * @author TomasR
+ * This class wraps around the Joystick class in order to make
+ *     working with Xbox360 controllers less of a pain.
+ * 
+ * The values from this class can be used in two ways. One could
+ *     either check each Button every cycle with .get(), or they
+ *     could call commands directly from the Buttons with .whenPressed()
+ * 
+ * USAGE:
+ *     // Initialization
+ *     myXboxController = new XboxController( <port the controller is on (starts at 0)> );
+ *     myXboxController.leftStick.setThumbstickDeadZone( .2 );  // Optional. See code below for defaults.
+ *     
+ *     // Using buttons
+ *     myXboxController.a.whenPressed( new MyCommand() );
+ *     myXboxController.lb.toggleWhenPressed( new MyCommand() );
+ *     myXboxController.rightStick.whenPressed( new MyCommand() );
+ *     
+ *     // Getting values directly
+ *     if( myXboxController.leftStick.getY() > .4 ) ...
+ *     
+ *     // Support of legacy methods (NOTE: These values are straight from the Joystick class. No deadzone stuff or anything)
+ *     if( xboxController.getX() > .4 ) ...
+ * 
+ * NOTES:
+ *     Although I have confidence that this will work, not everything has been tested.
+ *     This should work for the 2015 WPILib. The mappings of axis's and buttons may change in later years.
+ *     I am not a good Java programmer.
  */
-public class XboxController {
-	private static final double CONTROLLER_DEADZONE = 0.1;
+public class XboxController extends Joystick {
+    
+    /* Default Values */
+    private static final double DEFAULT_THUMBSTICK_DEADZONE = 0.1;  // Jiggle room for the thumbsticks
+    private static final double DEFAULT_TRIGGER_DEADZONE    = 0.01; // Jiggle room for the triggers
+    private static final double DEFAULT_TRIGGER_SENSITIVITY = 0.6;  // If the trigger is beyond this limit, say it has been pressed
+    
+    /* Button Mappings */
+    private static final int    A_BUTTON_ID                 = 1;
+    private static final int    B_BUTTON_ID                 = 2;
+    private static final int    X_BUTTON_ID                 = 3;
+    private static final int    Y_BUTTON_ID                 = 4;
+    private static final int    LB_BUTTON_ID                = 5;
+    private static final int    RB_BUTTON_ID                = 6;
+    private static final int    BACK_BUTTON_ID              = 7;
+    private static final int    START_BUTTON_ID             = 8;
+    private static final int    LEFT_THUMBSTIKC_BUTTON_ID   = 9;
+    private static final int    RIGHT_THUMBSTICK_BUTTON_ID  = 10;
+    
+    /* Axis Mappings */
+    private static final int    LEFT_THUMBSTICK_X_AXIS_ID   = 0;
+    private static final int    LEFT_THUMBSTICK_Y_AXIS_ID   = 1;
+    private static final int    LEFT_TRIGGER_AXIS_ID        = 2;
+    private static final int    RIGHT_TRIGGER_AXIS_ID       = 3;
+    private static final int    RIGHT_THUMBSTICK_X_AXIS_ID  = 4;
+    private static final int    RIGHT_THUMBSTICK_Y_AXIS_ID  = 5;
+    
+    
+    
+    /* Instance Values */
+    private final   int             port;
+    private final   Joystick        controller;
+    
+    public final    Thumbstick      leftStick;
+    public final    Thumbstick      rightStick;
+    public final    Trigger         lt;
+    public final    Trigger         rt;
+    public final    DirectionalPad  dPad;
+    public final    Button          a;
+    public final    Button          b;
+    public final    Button          x;
+    public final    Button          y;
+    public final    Button          lb;
+    public final    Button          rb;
+    public final    Button          back;
+    public final    Button          start;
+    
+    
+    
+    /**
+     * (Constructor #1)
+     * There are two ways to make an XboxController. With this constructor,
+     * you can specify which port you expect the controller to be on.
+     * @param port
+     */
+    public XboxController(final int port) {
+        super(port);  // Extends Joystick...
+        
+        /* Initialize */
+        this.port       = port;
+        this.controller = new Joystick(this.port);    // Joystick referenced by everything
+        
+        this.leftStick  = new Thumbstick    (this.controller, HAND.LEFT);
+        this.rightStick = new Thumbstick    (this.controller, HAND.RIGHT);
+        this.dPad       = new DirectionalPad(this.controller);
+        this.lt         = new Trigger       (this.controller, HAND.LEFT);
+        this.rt         = new Trigger       (this.controller, HAND.RIGHT);
+        this.a          = new JoystickButton(this.controller, A_BUTTON_ID);
+        this.b          = new JoystickButton(this.controller, B_BUTTON_ID);
+        this.x          = new JoystickButton(this.controller, X_BUTTON_ID);
+        this.y          = new JoystickButton(this.controller, Y_BUTTON_ID);
+        this.lb         = new JoystickButton(this.controller, LB_BUTTON_ID);
+        this.rb         = new JoystickButton(this.controller, RB_BUTTON_ID);
+        this.back       = new JoystickButton(this.controller, BACK_BUTTON_ID);
+        this.start      = new JoystickButton(this.controller, START_BUTTON_ID);
+    }
+    
+    
+    
+    /**
+     * (Constructor #2) This is the other constructor. I would recommend using this one instead
+     * as it is unlikely that anything else but the XboxController will be
+     * connected.
+     */
+    public XboxController() {
+        this(0);
+    }
+    
+    
+    
+    /**
+     * Rather than use an integer (which might not be what we expect)
+     * we use an enum which has a set amount of possibilities.
+     */
+    public static enum HAND {
+        LEFT, RIGHT
+    }
+    
+    
+    
+    /**
+     * This is the relation of direction and number for .getPOV() used
+     * in the DirectionalPad class.
+     */
+    public static enum DPAD {
+        UP          (0),
+        UP_RIGHT    (45),
+        RIGHT       (90),
+        DOWN_RIGHT  (135),
+        DOWN        (180),
+        DOWN_LEFT   (225),
+        LEFT        (270),
+        UP_LEFT     (315);
+        
+        
+        
+        /* Instance Value */
+        private int value;
+        
+        
+        
+        /**
+         * Constructor
+         * @param value
+         */
+        DPAD(final int value) {
+            this.value = value;
+        }
+        
+        /**
+         * Convert integers to DPAD values
+         * @param value
+         * @return DPAD with matching angle
+         */
+        public static DPAD getEnum(int angle) {
+            angle = Math.abs(angle);
+            angle %= 360;
+            angle = Math.round(angle / 45) * 45;    // May have rounding errors. Due to rounding errors.
+            
+            DPAD[] all = DPAD.values();
+            
+            for(int i = 0; i < all.length; i++) {
+                if (all[i].value == angle) {
+                    return all[i] ;
+                }
+            }
+            // I don't know what to do here
+            //throw new UnsupportedOperationException("Integer supplied (" + angle + ") is not a possible value of this enum.");
+            System.out.println("[XboxController.DPAD.getEnum()] Angle supplied (" + angle + ") has no related DPad direction");
+            return DPAD.UP;
+        }
+    }
+    
+    
+    
+    /**
+     * This class is used to represent the thumbsticks on the
+     * Xbox360 controller.
+     */
+    public static class Thumbstick extends Button {
+        
+        /* Instance Values */
+        private final   Joystick    parent;
+        private final   HAND        hand;
+        private final   int         xAxisID;
+        private final   int         yAxisID;
+        private final   int         pressedID;
+        private         double      xDeadZone;
+        private         double      yDeadZone;
+        
+        
+        
+        /**
+         * Constructor
+         * @param parent
+         * @param hand
+         */
+        Thumbstick(final Joystick parent, final HAND hand) {
+            
+            /* Initialize */
+            this.parent     = parent;
+            this.hand       = hand;
+            this.xDeadZone  = DEFAULT_THUMBSTICK_DEADZONE;
+            this.yDeadZone  = DEFAULT_THUMBSTICK_DEADZONE;
+            
+            if (hand == HAND.LEFT) {
+                this.xAxisID    = LEFT_THUMBSTICK_X_AXIS_ID;
+                this.yAxisID    = LEFT_THUMBSTICK_Y_AXIS_ID;
+                this.pressedID  = LEFT_THUMBSTIKC_BUTTON_ID;
+            } else {                                            // If right hand
+                this.xAxisID    = RIGHT_THUMBSTICK_X_AXIS_ID;
+                this.yAxisID    = RIGHT_THUMBSTICK_Y_AXIS_ID;
+                this.pressedID  = RIGHT_THUMBSTICK_BUTTON_ID;
+            }
+        }
+        
+        
+        
+        /**
+         * + = right
+         * - = left
+         * @return X but with a deadzone
+         */
+        private double rawX() {
+            final double rawInput = parent.getRawAxis(xAxisID);
+            
+            return createDeadZone(rawInput, xDeadZone);
+        }
+        
+        /**
+         * + = up
+         * - = down
+         * @return Y but with a deadzone
+         */
+        private double rawY() {
+            final double rawInput = -parent.getRawAxis(yAxisID);    // -Y was up on our thumbsticks. Consider this a fix?
+            
+            return createDeadZone(rawInput, yDeadZone);
+        }
+        
+        /**
+         * magnitude
+         * @param x
+         * @param y
+         * @return Magnitude of thing
+         */
+        private double magnitude(double x, double y) {
+            final double xSquared   = Math.pow(x, 2);
+            final double ySquared   = Math.pow(y, 2);
+            
+            return Math.sqrt(xSquared + ySquared);
+        }
+        
+        /**
+         * angleToSquareSpace
+         * @param angle
+         * @return Number between 0 and PI/4
+         */
+        private double angleToSquareSpace(double angle) {
+            final double absAngle   = Math.abs(angle);
+            final double halfPi     = Math.PI / 2;
+            final double quarterPi  = Math.PI / 4;
+            final double modulus    = absAngle % halfPi;
+            
+            return -Math.abs(modulus - quarterPi) + quarterPi;
+        }
+        
+        /**
+         * scaleMagnitude
+         * @param x
+         * @param y
+         * @return 
+         */
+        private double scaleMagnitude(double x, double y) {
+            final double magnitude      = magnitude(x, y);
+            final double angle          = Math.atan2(x, y);
+            final double newAngle       = angleToSquareSpace(angle);
+            final double scaleFactor    = Math.cos(newAngle);
+            
+            return magnitude * scaleFactor;
+        }
+        
+        
+        
+        /* Extended Methods */
+        @Override
+        public boolean get() {
+            return parent.getRawButton(pressedID);
+        }
+        
+        
+        
+        /* Get Methods */
+        /**
+         * Used to see which side of the controller this thumbstick is
+         * @return Thumbstick hand
+         */
+        public HAND getHand() {
+            return hand;
+        }
+        
+        /**
+         * getRawX
+         * @return X with a deadzone
+         */
+        public double getX() {
+            return rawX();
+        }
+        
+        /**
+         * getRawY
+         * @return Y with a deadzone
+         */
+        public double getY() {
+            return rawY();
+        }
+        
+        /**
+         * 0    = Up;
+         * 90   = Right;
+         * ...
+         * @return Angle the thumbstick is pointing
+         */
+        public double getAngle() {
+            final double angle = Math.atan2(rawX(), rawY());
+            
+            return Math.toDegrees(angle);
+        }
+        
+        /**
+         * getMagnitude
+         * @return A number between 0 and 1
+         */
+        public double getMagnitude() {
+            double magnitude = scaleMagnitude(rawX(), rawY());
+            
+            if (magnitude > 1) {
+                magnitude = 1;  // Prevent any errors that might arise
+            }
+            
+            return magnitude;
+        }
+        
+        /**
+         * Get the adjusted thumbstick position (Magnitude <= 1)
+         * @return True thumbstick position
+         */
+        public double getTrueX() {
+            final double x      = rawX();
+            final double y      = rawY();
+            final double angle  = Math.atan2(x, y);
+            
+            return scaleMagnitude(x, y) * Math.sin(angle);
+        }
+        
+        /**
+         * Get the adjusted thumbstick position (Magnitude <= 1)
+         * @return True thumbstick position
+         */
+        public double getTrueY() {
+            final double x      = rawX();
+            final double y      = rawY();
+            final double angle  = Math.atan2(x, y);
+            
+            return scaleMagnitude(x, y) * Math.cos(angle);
+        }
+        
+        
+        
+        /* Set Methods */
+        /**
+         * Set the X axis deadzone of this thumbstick
+         * @param number
+         */
+        public void setXDeadZone(double number) {
+            xDeadZone = number;
+        }
+        
+        /**
+         * Set the Y axis deadzone of this thumbstick
+         * @param number
+         */
+        public void setYDeadZone(double number) {
+            yDeadZone = number;
+        }
 
-	private DriverStation dStation;
-	private int port = 0, buttonState = 0, buttonCount = 0;
-	private Button[] buttons = new Button[10];
-	private short lRumble = 0, rRumble = 0;
+        /**
+         * Set both axis deadzones of this thumbstick
+         * @param number
+         */
+        public void setDeadZone(double number) {
+            xDeadZone = number;
+            yDeadZone = number;
+        }
+    }
+    
+    
+    
+    /**
+     * This class is used to represent one of the two
+     * Triggers on an Xbox360 controller.
+     */
+    public static class Trigger extends Button {
+        
+        /* Instance Values */
+        private final   Joystick    parent;
+        private final   HAND        hand;
+        
+        private         double      deadZone;
+        private         double      sensitivity;
+        
+        
+        
+        /**
+         * Constructor
+         * @param joystick
+         * @param hand
+         */
+        Trigger(final Joystick joystick, final HAND hand) {
+            
+            /* Initialize */
+            this.parent         = joystick;
+            this.hand           = hand;
+            this.deadZone       = DEFAULT_TRIGGER_DEADZONE;
+            this.sensitivity    = DEFAULT_TRIGGER_SENSITIVITY;
+        }
+        
+        
+        
+        /* Extended Methods */
+        @Override
+        public boolean get() {
+            return getX() > sensitivity;
+        }
+        
+        
+        
+        /* Get Methods */
+        /**
+         * getHand
+         * @return Trigger hand
+         * 
+         * See which side of the controller this trigger is
+         */
+        public HAND getHand() {
+            return hand;
+        }
+        
+        /**
+         * 0 = Not pressed
+         * 1 = Completely pressed
+         * @return How far its pressed
+         */
+        public double getX() {
+            final double rawInput;
+            
+            if (hand == HAND.LEFT) {
+                rawInput = parent.getRawAxis(LEFT_TRIGGER_AXIS_ID);
+            } else {
+                rawInput = parent.getRawAxis(RIGHT_TRIGGER_AXIS_ID);
+            }
+            
+            return createDeadZone(rawInput, deadZone);
+        }
+        
+        public double getY() {
+            return getX();	// Triggers have one dimensional movement. Use getX() instead
+        }
+        
+        
+        
+        /* Set Methods */
+        /**
+         * Set the deadzone of this trigger
+         * @param number
+         */
+        public void setTriggerDeadZone(double number) {
+            this.deadZone = number;
+        }
+        
+        /**
+         * How far you need to press this trigger to activate a button press
+         * @param number
+         */
+        public void setTriggerSensitivity(double number) {
+            this.sensitivity = number;
+        }
+    }
+    
+    
+    
+    /**
+     * This is a weird object which is essentially just 8 buttons.
+     */
+    public static class DirectionalPad extends Button {
+        
+        /* Instance Values */
+        private final   Joystick    parent;
+        
+        public final    Button      up;
+        public final    Button      upRight;
+        public final    Button      right;
+        public final    Button      downRight;
+        public final    Button      down;
+        public final    Button      downLeft;
+        public final    Button      left;
+        public final    Button      upLeft;
+        
+        
+        
+        /**
+         * Constructor
+         * @param parent
+         */
+        DirectionalPad(final Joystick parent) {
+            
+            /* Initialize */
+            this.parent	    = parent;
+            this.up         = new DPadButton(this, DPAD.UP);
+            this.upRight    = new DPadButton(this, DPAD.UP_RIGHT);
+            this.right      = new DPadButton(this, DPAD.RIGHT);
+            this.downRight  = new DPadButton(this, DPAD.DOWN_RIGHT);
+            this.down       = new DPadButton(this, DPAD.DOWN);
+            this.downLeft   = new DPadButton(this, DPAD.DOWN_LEFT);
+            this.left       = new DPadButton(this, DPAD.LEFT);
+            this.upLeft     = new DPadButton(this, DPAD.UP_LEFT);
+        }
+        
+        
+        
+        /**
+         * This class is used to represent each of the 8 values a
+         * dPad has as a button.
+         */
+        public static class DPadButton extends Button {
+            
+            /* Instance Values */
+            private final DPAD              direction;
+            private final DirectionalPad    parent;
+            
+            
+            
+            /**
+             * Constructor
+             * @param parent
+             * @param dPad
+             */
+            DPadButton(final DirectionalPad parent, final DPAD dPadDirection) {
+                
+                /* Initialize */
+                this.direction  = dPadDirection;
+                this.parent     = parent;
+            }
+            
+            
+            
+            /* Extended Methods */
+            @Override
+            public boolean get() {
+                return parent.getAngle() == direction.value;
+            }
+        }
+        
+        
+        
+        private int angle() {
+            return parent.getPOV();
+        }
+        
+        
+        /* Extended Methods */
+        @Override
+        public boolean get() {
+            return angle() != -1;
+        }
+        
+        
+        
+        /* Get Methods */
+        /**
+         * UP          0;
+         * UP_RIGHT    45;
+         * RIGHT       90;
+         * DOWN_RIGHT  135;
+         * DOWN        180;
+         * DOWN_LEFT   225;
+         * LEFT        270;
+         * UP_LEFT     315;
+         * @return A number between 0 and 315 indicating direction
+         */
+        public int getAngle() {
+            return angle();
+        }
+        
+        /**
+         * Just like getAngle, but returns a direction instead of an angle
+         * @return A DPAD direction
+         */
+        public DPAD getDirection() {
+            return DPAD.getEnum(angle());
+        }
+    }
+    
+    
+    
+    /**
+     * Creates a deadzone, but without clipping the lower values.
+     * turns this
+     * |--1--2--3--4--5--|
+     * into this
+     * ______|-1-2-3-4-5-|
+     * @param input
+     * @param deadZoneSize
+     * @return adjusted_input
+     */
+    private static double createDeadZone(double input, double deadZoneSize) {
+        final   double  negative;
+                double  deadZoneSizeClamp = deadZoneSize;
+                double  adjusted;
+        
+        if (deadZoneSizeClamp < 0 || deadZoneSizeClamp >= 1) {
+            deadZoneSizeClamp = 0;  // Prevent any weird errors
+        }
+        
+        negative    = input < 0 ? -1 : 1;
+        
+        adjusted    = Math.abs(input) - deadZoneSizeClamp;  // Subtract the deadzone from the magnitude
+        adjusted    = adjusted < 0 ? 0 : adjusted;          // if the new input is negative, make it zero
+        adjusted    = adjusted / (1 - deadZoneSizeClamp);   // Adjust the adjustment so it can max at 1
+        
+        return negative * adjusted;
+    }
+    
+    
+    
+    /* Get Methods */
+    /**
+     * @return The port of this XboxController
+     */
+    public int getPort() {
+        return port;
+    }
+    
+    /**
+     * @return The Joystick of this XboxController
+     */
+    public Joystick getJoystick() {
+        return controller;
+    }
+    
+    
+    
+    /* Set Methods */
+    /**
+     * Make the controller vibrate
+     * @param hand The side of the controller to rumble
+     * @param intensity How strong the rumble is
+     */
+    public void setRumble(HAND hand, double intensity) {
+        final float amount = new Float(intensity);
+        
+        if (hand == HAND.LEFT) {
+            controller.setRumble(RumbleType.kLeftRumble, amount);
+        } else {
+            controller.setRumble(RumbleType.kRightRumble, amount);
+        }
+    }
+    
+    /**
+     * Make the controller vibrate
+     * @param intensity How strong the rumble is
+     */
+    public void setRumble(double intensity) {
+        final float amount = new Float(intensity);
+        
+        controller.setRumble(RumbleType.kLeftRumble, amount);
+        controller.setRumble(RumbleType.kRightRumble, amount);
+    }
 
-	public Axis LeftStick = new Axis(0, 0), RightStick = new Axis(0, 0);
-	public triggers Triggers = new triggers(0, 0);
-	public ButtonRemap Buttons;
-	public POV DPad = new POV();
-
-	/**
-	 * Sets up the controller
-	 * 
-	 * @param port
-	 *            Controller port
-	 */
-	public XboxController(int port) {
-		this(port, CONTROLLER_DEADZONE, CONTROLLER_DEADZONE);
-	}
-
-	/**
-	 * Sets up the controller with dead zones
-	 * 
-	 * @param port
-	 *            Controller port
-	 * @param deadZone
-	 *            The magnitude of the dead zone on the each stick
-	 */
-	public XboxController(int port, double deadZone) {
-		this(port, deadZone, deadZone);
-	}
-
-	/**
-	 * Sets up the controller with dead zones
-	 * 
-	 * @param port
-	 *            Controller port
-	 * @param leftDeadZone
-	 *            The magnitude of the dead zone on the left stick
-	 * @param rightDeadZone
-	 *            The magnitude of the dead zone on the right stick
-	 */
-	public XboxController(int port, double leftDeadZone, double rightDeadZone) {
-		dStation = DriverStation.getInstance();
-		setDeadZones(leftDeadZone, rightDeadZone);
-		this.port = port;
-		for (int ii = 0; ii < 10; ii++) {
-			buttons[ii] = new Button();
-		}
-		refresh();
-		Buttons = new ButtonRemap();
-		buttonCount = dStation.getStickButtonCount(port);
-	}
-
-	/**
-	 * Sends values to the rumble motors in the controller
-	 * 
-	 * @param type
-	 *            either left or right
-	 * @param value
-	 *            (0 to 1) rumble intensity value
-	 */
-	public void vibrate(Sides type, double value) {
-		if (value < 0)
-			value = 0;
-		else if (value > 1)
-			value = 1;
-		if (type == Sides.Left || type == Sides.Combined)
-			lRumble = (short) (value * 65535);
-		if (type == Sides.Right || type == Sides.Combined)
-			rRumble = (short) (value * 65535);
-		//HAL.setJoystickOutputs((byte) port, 0, lRumble, rRumble);
-	}
-
-	/**
-	 * Returns the state of a specific button
-	 * 
-	 * @param i
-	 *            The button number starting with 1
-	 * @return True if the button is pressed else False
-	 * @throws Exception
-	 *             if the button does not exist
-	 */
-	public boolean getRawButton(int i) throws Exception {
-		i -= 1;
-		if (i >= 0 && i < buttonCount)
-			return (buttonState & (1 << i)) != 0;
-		throw new Exception(String.format("Button %d does not exist", i));
-	}
-
-	/**
-	 * Gets all 10 buttons in an array format
-	 * 
-	 * @return The entire button array
-	 */
-	public Button[] getButtonArray() {
-		return buttons;
-	}
-
-	/**
-	 * Returns the state of a specific axis
-	 * 
-	 * @param i
-	 *            Axis number starting with 0
-	 * @return Returns a double between -1 and 1
-	 */
-	public double getRawAxis(int i) {
-		return dStation.getStickAxis(port, i);
-	}
-
-	/**
-	 * @return The number of buttons that the controller has
-	 */
-	public int getButtonCount() {
-		return buttonCount;
-	}
-
-	/**
-	 * Reacquires the values for all inputs
-	 */
-	public void refresh() {
-		//set new deadzones
-		double deadZone = SmartDashboard.getNumber("deadzone", CONTROLLER_DEADZONE);
-		setDeadZones(deadZone,deadZone);
-		//getDpad();
-		getLeftStick();
-		getRightStick();
-		getTrigger();
-		getButtons();
-	}
-
-	/**
-	 * Sets the dead zones of the two sticks<br/>
-	 * Set either to 0 to turn the dead zone off or anything up to 0.5
-	 * 
-	 * @param leftStick
-	 *            The magnitude of the dead zone in the LeftStick
-	 * @param rightStick
-	 *            The magnitude of the dead zone in the RightStick
-	 */
-	public void setDeadZones(double leftStick, double rightStick) {
-		leftStick = Math.max(Math.abs(leftStick), 0.1);
-		rightStick = Math.max(Math.abs(rightStick), 0.1);
-		LeftStick.deadZone = leftStick * leftStick;
-		RightStick.deadZone = rightStick * rightStick;
-	}
-
-	/**
-	 * Calculates the magnitude of on of the sticks
-	 * 
-	 * @param stick
-	 *            The side of the stick
-	 * @return The magnitude of the stick
-	 */
-	public double getMagnitude(StickSides stick) {
-		if (stick == StickSides.Left)
-			return Math.sqrt(LeftStick.X * LeftStick.X + LeftStick.Y * LeftStick.Y);
-		else
-			return Math.sqrt(RightStick.X * RightStick.X + RightStick.Y * RightStick.Y);
-	}
-
-	void getDpad() {
-		DPad.set(dStation.getStickPOV(port, 0));
-	}
-
-	void getLeftStick() {
-		LeftStick.set(dStation.getStickAxis(port, 0), dStation.getStickAxis(port, 1));
-	}
-
-	void getRightStick() {
-		RightStick.set(dStation.getStickAxis(port, 4), dStation.getStickAxis(port, 5));
-	}
-
-	void getTrigger() {
-		Triggers.set(dStation.getStickAxis(port, 2), dStation.getStickAxis(port, 3));
-	}
-
-	void getButtons() {
-		buttonState = dStation.getStickButtons(port);
-		for (int i = 0; i < 10; i++) {
-			buttons[i].set((buttonState & (1 << i)) != 0);
-		}
-	}
-
-	/**
-	 * The triggers of the Controller
-	 */
-	public class triggers {
-		/** (0 to 1) value for the individual trigger **/
-		public double Right, Left;
-		/** (-1 to 1) combined value equivalent to (Right - Left) **/
-		public double Combined;
-		private Axis trig;
-		private int xs, ys;
-		private double[] val = new double[3];
-
-		private triggers(double r, double l) {
-			Right = r;
-			Left = l;
-			combine();
-		}
-
-		public Axis getAxis(Sides x, Sides y) {
-			if (trig != null) {
-				return trig;
-			} else {
-				val[0] = Left;
-				val[1] = Right;
-				val[2] = Combined;
-				xs = x.val;
-				ys = y.val;
-				trig = new Axis(val[xs], val[ys]);
-				return trig;
-			}
-		}
-
-		void set(double left, double right) {
-			Left = left;
-			Right = right;
-			combine();
-			if (trig != null) {
-				val[0] = Left;
-				val[1] = Right;
-				val[2] = Combined;
-				trig.set(val[xs], val[ys]);
-			}
-		}
-
-		void combine() {
-			Combined = Right - Left;
-		}
-	}
-
-	/** The Dpad of the controller **/
-	public class POV {
-		public boolean Up = false, Down = false, Left = false, Right = false;
-		/**
-		 * Returns -1 if the Direction Pad is not pressed else it returns a
-		 * compass orientation starting with up being 0
-		 **/
-		public int degrees = -1;
-
-		void set(int degree) {
-			Up = degree == 315 || degree == 0 || degree == 45;
-			Down = degree <= 225 && degree >= 135;
-			Left = degree <= 315 && degree >= 225;
-			Right = degree <= 135 && degree >= 45;
-			degrees = degree;
-		}
-	}
-
-	/**
-	 * Contains the values of a single Stick
-	 */
-	public class Axis {
-		public double X, Y;
-		double deadZone = 0;
-
-		private Axis(double x, double y) {
-			X = x;
-			Y = y;
-		}
-
-		void set(double x, double y) {
-			X = x;
-			Y = y;
-			applyDeadzone();
-		}
-
-		void applyDeadzone() {
-			if (deadZone != 0 && X * X + Y * Y < deadZone) {
-				X = 0;
-				Y = 0;
-			}
-		}
-	}
-
-	/** Contains the controllers button **/
-	public class Button {
-		public boolean current = false, last = false, changedDown = false, changedUp = false;
-		private Trigger buttonT;
-
-		/**
-		 * Runs your command automatically<br/>
-		 * Acts when pressed<br/>
-		 * Should only be called once when setting the command<br/>
-		 * Requires <u>Scheduler.getInstance().run()</u>
-		 * 
-		 * @param command
-		 *            your custom command
-		 * @param state
-		 *            A selection of when to run the command
-		 */
-		public void bindCommand(Command command, CommandState state) {
-			if (buttonT == null)
-				buttonT = new Trigger() {
-					@Override
-					public boolean get() {
-						return current;
-					}
-				};
-			switch (state) {
-			case WhenPressed:
-				buttonT.whenActive(command);
-				break;
-			case Toggle:
-				buttonT.toggleWhenActive(command);
-				break;
-			case WhilePressed:
-				buttonT.whileActive(command);
-				break;
-			case WhileNotPressed:
-				buttonT.whenInactive(command);
-				buttonT.cancelWhenActive(command);
-				break;
-			case Cancel:
-				buttonT.cancelWhenActive(command);
-				break;
-			}
-		}
-
-		void set(boolean current) {
-			last = this.current;
-			this.current = current;
-			changedDown = !last && this.current;
-			changedUp = last && !this.current;
-		}
-	}
-
-	/** Gives names to the buttons **/
-	public class ButtonRemap {
-		public Button A = buttons[ButtonNumbers.A];
-		public Button B = buttons[ButtonNumbers.B];
-		public Button X = buttons[ButtonNumbers.X];
-		public Button Y = buttons[ButtonNumbers.Y];
-		/** Left Bumper **/
-		public Button LB = buttons[ButtonNumbers.LB];
-		/** Right Bumper **/
-		public Button RB = buttons[ButtonNumbers.RB];
-		public Button Back = buttons[ButtonNumbers.Back];
-		public Button Start = buttons[ButtonNumbers.Start];
-		public Button LeftStick = buttons[ButtonNumbers.LeftStick];
-		public Button RightStick = buttons[ButtonNumbers.RightStick];
-
-	}
-
-	/** The states of commends given to buttons **/
-	public enum CommandState {
-		/**
-		 * Runs the command every time it the button is pressed<br/>
-		 * Does not cancel
-		 **/
-		WhenPressed,
-		/**
-		 * Runs the command on every first press<br/>
-		 * Cancels the command on every second press
-		 **/
-		Toggle,
-		/** Runs the command while the button is pressed **/
-		WhilePressed,
-		/** Runs the command while the button is not pressed **/
-		WhileNotPressed,
-		/** Cancels the command once the button is pressed **/
-		Cancel;
-	}
-
-	public enum StickSides {
-		Left, Right
-	}
-
-	public enum Sides {
-		Left(0), Right(1), Combined(2);
-
-		int val;
-
-		Sides(int v) {
-			val = v;
-		}
-	}
-
-	public static class ButtonNumbers {
-		public static final int A = 0;
-		public static final int B = 1;
-		public static final int X = 2;
-		public static final int Y = 3;
-		/** Left Bumper **/
-		public static final int LB = 4;
-		/** Right Bumper **/
-		public static final int RB = 5;
-		public static final int Back = 6;
-		public static final int Start = 7;
-		public static final int LeftStick = 8;
-		public static final int RightStick = 9;
-	}
+    /*
+     * Set both axis deadzones of both thumbsticks
+     * @param number
+     */
+    public void setDeadZone(double number) {
+        leftStick.setDeadZone(number);
+        rightStick.setDeadZone(number);
+    }
 }

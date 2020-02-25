@@ -11,8 +11,8 @@ import frc.robot.util.Loggable;
 import frc.robot.util.Refreshable;
 
 public class Shooter extends Subsystem implements Loggable, Refreshable {
-    private static final int kTopMotorID = 13;
-    private static final int kBottomMotorID = 23;
+    private static final int kTopMotorID = 11;
+    private static final int kBottomMotorID = 21;
 
     private CANSparkMax topMotor;
     private CANSparkMax bottomMotor;
@@ -21,6 +21,8 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
     private CANEncoder bottomEncoder;
 
     private double topSpeed, bottomSpeed;
+
+    private double speedChange;
 
     public Shooter() {
         topMotor = new CANSparkMax(kTopMotorID, MotorType.kBrushless);
@@ -32,6 +34,8 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
         topMotor.setInverted(false);
         bottomMotor.setInverted(true);
 
+        speedChange = 0.01;
+
         initEncoders();
     }
 
@@ -42,8 +46,8 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
 
     @Override
     public void log() {
-        SmartDashboard.putNumber("Shooter/TopMotor/Speed", topMotor.get());
-        SmartDashboard.putNumber("Shooter/BottomMotor/Speed", bottomMotor.get());
+        SmartDashboard.putNumber("Shooter/TopMotor/Speed", topSpeed);
+        SmartDashboard.putNumber("Shooter/BottomMotor/Speed", bottomSpeed);
     }
 
     @Override
@@ -75,5 +79,13 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
 
 	public void setTopSpeed(double topSpeed) {
 		this.topSpeed = topSpeed;
-	}
+    }
+    
+    public double getSpeedChange(){
+        return speedChange;
+    }
+
+    public void setSpeedChange(double speedChange){
+        this.speedChange = speedChange;
+    }
 }
