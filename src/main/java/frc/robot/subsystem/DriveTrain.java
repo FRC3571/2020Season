@@ -26,10 +26,10 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     private static final double kGearRatioLow = 4.6;
     private static final double kGearRatioHigh = 2.7;
 
-    private static final int kLeftLeadID = 23;
-    private static final int kLeftFollowID = 22;
-    private static final int kRightLeadID = 13;
-    private static final int kRightFollowID = 12;
+    private static final int kLeftLeadID = 13;
+    private static final int kLeftFollowID = 12;
+    private static final int kRightLeadID = 23;
+    private static final int kRightFollowID = 22;
 
     private static final double kGearRatioFirst = 0.3;
     private static final double kGearRatioSecond = 0.4;
