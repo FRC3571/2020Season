@@ -48,6 +48,7 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
     public void log() {
         SmartDashboard.putNumber("Shooter/TopMotor/Speed", topSpeed);
         SmartDashboard.putNumber("Shooter/BottomMotor/Speed", bottomSpeed);
+        SmartDashboard.putNumber("Shooter/BottomMotor/SpeedChange", speedChange);
     }
 
     @Override

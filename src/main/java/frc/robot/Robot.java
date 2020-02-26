@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.commands.ChangeShooterSpeed;
+import frc.robot.commands.ChangeShooterSpeedChange;
 import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.FollowBall;
 import frc.robot.commands.LiftCommand;
@@ -132,10 +133,24 @@ public class Robot extends TimedRobot {
     }
 
     private void initController() {
-        
+        //Testing Shooter
+        subsystemController.lb.whenPressed(new ChangeShooterSpeed(1,false));
+        subsystemController.lt.whenPressed(new ChangeShooterSpeed(1,true));
+
+        subsystemController.rb.whenPressed(new ChangeShooterSpeed(2,false));
+        subsystemController.rt.whenPressed(new ChangeShooterSpeed(2,true));
+
+        subsystemController.a.whenPressed(new ChangeShooterSpeedChange(10));
+        subsystemController.b.whenPressed(new ChangeShooterSpeedChange(1/10));
+        subsystemController.x.whenPressed(new ChangeShooterSpeedChange(5));
+        subsystemController.y.whenPressed(new ChangeShooterSpeedChange(1/5));
+
+        subsystemController.rightStick.toggleWhenPressed(new ManualShoot());
+
+
         
         //Testing Shooter
-        subsystemController.lb.whenPressed(new ChangeShooterSpeed(1, 0.1));
+        //subsystemController.lb.whenPressed(new ChangeShooterSpeed(1, 0.1));
 
 
         // climbing
