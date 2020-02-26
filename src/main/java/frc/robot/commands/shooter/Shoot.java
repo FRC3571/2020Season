@@ -1,17 +1,14 @@
-package frc.robot.commands;
+package frc.robot.commands.shooter;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystem.Shooter;
-import frc.robot.util.XboxController;
 
-public class ManualShoot extends Command {
+public class Shoot extends Command {
 
     private Shooter shooter;
-    private XboxController controller;
-    private double topSpeed, bottomSpeed;
 
-    public ManualShoot() {
+    public Shoot() {
         this.shooter = Robot.getInstance().getShooter();
         setInterruptible(true);
         requires(shooter);

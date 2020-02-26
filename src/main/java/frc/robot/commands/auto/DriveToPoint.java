@@ -1,7 +1,7 @@
 package frc.robot.commands.auto;
 
-import frc.robot.commands.DriveStraightDistance;
-import frc.robot.commands.TurnToAngle;
+import frc.robot.commands.drivetrain.DriveStraightDistance;
+import frc.robot.commands.drivetrain.TurnToAngle;
 //import frc.robot.util.RobotMath;
 //import ca.team3571.offseason.commands.TurnWithDegrees;
 import edu.wpi.first.wpilibj.command.CommandGroup;

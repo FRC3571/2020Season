@@ -1,23 +1,31 @@
-package frc.robot.commands;
+package frc.robot.commands.shooter;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.Robot;
 import frc.robot.subsystem.Shooter;
 
-public class ChangeShooterSpeedChange extends InstantCommand {
+public class ChangeShooterPower extends InstantCommand {
 
     private Shooter shooter;
-    private double multiplier;
+    private boolean increase;
+    private double amount;
 
-    public ChangeShooterSpeedChange(int multiplier) {
+    public ChangeShooterPower(boolean increase) {
         this.shooter = Robot.getInstance().getShooter();
-        this.multiplier = multiplier;
+        this.increase = increase;
         requires(shooter);
     }
 
     @Override
     protected void initialize() {
-        shooter.setSpeedChange(shooter.getSpeedChange()*multiplier);
+        amount = 0.05;
+        if (!increase)
+            amount *= -1;
+    }
+
+    @Override
+    protected void execute() {
+        shooter.setSpeed(shooter.getBottomSpeed() + amount);
     }
 
     @Override

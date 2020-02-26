@@ -2,8 +2,8 @@ package frc.robot.subsystem;
 
 import frc.robot.Robot;
 import frc.robot.util.Refreshable;
-import frc.robot.commands.ChangeGear;
-import frc.robot.commands.DriveJoystick;
+import frc.robot.commands.drivetrain.ChangeGear;
+import frc.robot.commands.drivetrain.DriveJoystick;
 import frc.robot.commands.SetPosition;
 import frc.robot.util.Loggable;
 import frc.robot.util.RobotMath;
