@@ -10,20 +10,15 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.commands.ChangeShooterSpeed;
 import frc.robot.commands.ChangeShooterSpeedChange;
-import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.FollowBall;
-import frc.robot.commands.LiftCommand;
 import frc.robot.commands.ManualShoot;
-import frc.robot.commands.OpenCloseCommand;
 import frc.robot.commands.auto.PracticeAuto;
 import frc.robot.component.ColorSensor;
 import frc.robot.component.NAVX;
 import frc.robot.component.Vision;
 import frc.robot.subsystem.DriveTrain;
 import frc.robot.subsystem.Intake;
-import frc.robot.subsystem.Pneumatics;
 import frc.robot.subsystem.Shooter;
-import frc.robot.subsystem.Elevator;
 import frc.robot.util.XboxController;
 
 public class Robot extends TimedRobot {
@@ -35,10 +30,8 @@ public class Robot extends TimedRobot {
     }
 
     private DriveTrain driveTrain;
-    private Elevator elevator;
     private Intake intake;
     private Shooter shooter;
-    private Pneumatics pneumatics;
     private Logger logger;
     private ColorSensor colorSensor;
     private XboxController subsystemController;
@@ -57,9 +50,7 @@ public class Robot extends TimedRobot {
         pdp = new PowerDistributionPanel();
         subsystemController = new XboxController(kController);
 
-        pneumatics = new Pneumatics();
         driveTrain = new DriveTrain();
-        elevator = new Elevator();
         shooter = new Shooter();
         intake = new Intake();
 
@@ -100,8 +91,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
-        // driveTrain.refresh();
-        elevator.refresh();
+        driveTrain.refresh();
         intake.refresh();
         shooter.refresh();
 
@@ -125,7 +115,6 @@ public class Robot extends TimedRobot {
 
     private void debug() {
         driveTrain.log();
-        elevator.log();
         intake.log();
         visionProcessor.log();
         navx.log();
@@ -213,16 +202,8 @@ public class Robot extends TimedRobot {
         return driveTrain;
     }
 
-    public Pneumatics getPneumatics() {
-        return pneumatics;
-    }
-
     public Intake getIntake() {
         return intake;
-    }
-
-    public Elevator getElevator() {
-        return elevator;
     }
 
     public Shooter getShooter() {
