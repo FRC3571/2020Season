@@ -8,6 +8,7 @@ import frc.robot.commands.SetPosition;
 import frc.robot.util.Loggable;
 import frc.robot.util.RobotMath;
 import frc.robot.util.XboxController;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -26,10 +27,10 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     private static final double kGearRatioLow = 4.6;
     private static final double kGearRatioHigh = 2.7;
 
-    private static final int kLeftLeadID = 13;
-    private static final int kLeftFollowID = 12;
-    private static final int kRightLeadID = 23;
-    private static final int kRightFollowID = 22;
+    private static final int kLeftFrontID = 12;
+    private static final int kLeftBackID = 13;
+    private static final int kRightFrontID = 22;
+    private static final int kRightBackID = 21;
 
     private static final double kGearRatioFirst = 0.3;
     private static final double kGearRatioSecond = 0.4;
@@ -49,19 +50,22 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     private Gear ChosenGear;
     private SendableChooser<DriveMode> DriveModeChooser;
     // SparkMax Objects
-    private CANSparkMax leftF;
-    private CANSparkMax rightF;
-    private CANSparkMax leftL;
-    private CANSparkMax rightL;
+    private CANSparkMax leftFront;
+    private CANSparkMax rightFront;
+    private CANSparkMax leftBack;
+    private CANSparkMax rightBack;
+
+    //Speed Controller Groups
+    SpeedControllerGroup left, right;
 
     // underlying mechanism
     private DifferentialDrive drive;
 
     // Distance Encoders
-    private CANEncoder leftLEncoder;
-    private CANEncoder rightLEncoder;
-    private CANEncoder leftFEncoder;
-    private CANEncoder rightFEncoder;
+    private CANEncoder leftFrontEncoder;
+    private CANEncoder rightFrontEncoder;
+    private CANEncoder leftBackEncoder;
+    private CANEncoder rightBackEncoder;
 
     private double distance, leftDistance, rightDistance;
 
@@ -82,27 +86,29 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
         DriveModeChooser = new SendableChooser<>();
 
         // initialize hardware
-        rightL = new CANSparkMax(kRightLeadID, MotorType.kBrushless);
-        leftL = new CANSparkMax(kLeftLeadID, MotorType.kBrushless);
-        rightF = new CANSparkMax(kRightFollowID, MotorType.kBrushless);
-        leftF = new CANSparkMax(kLeftFollowID, MotorType.kBrushless);
+        rightFront = new CANSparkMax(kRightFrontID, MotorType.kBrushless);
+        leftFront = new CANSparkMax(kLeftFrontID, MotorType.kBrushless);
+        rightBack = new CANSparkMax(kRightBackID, MotorType.kBrushless);
+        leftBack = new CANSparkMax(kLeftBackID, MotorType.kBrushless);
 
-        leftL.restoreFactoryDefaults();
-        rightL.restoreFactoryDefaults();
-        leftF.restoreFactoryDefaults();
-        rightF.restoreFactoryDefaults();
+        rightFront.restoreFactoryDefaults();
+        leftFront.restoreFactoryDefaults();
+        rightBack.restoreFactoryDefaults();
+        leftBack.restoreFactoryDefaults();
 
-        rightF.follow(rightL);
-        leftF.follow(leftL);
+        rightFront.setInverted(true);
+        leftFront.setInverted(true);
+        rightBack.setInverted(true);
+        leftBack.setInverted(true);
 
-        drive = new DifferentialDrive(leftL, rightL);
+        left = new SpeedControllerGroup(leftFront, leftBack);
+
+        right = new SpeedControllerGroup(rightFront, rightBack);
+
+
+        drive = new DifferentialDrive(left, right);
 
         initEncoders();
-
-        leftL.setInverted(true);
-        rightL.setInverted(true);
-        leftF.setInverted(true);
-        rightF.setInverted(true);
 
         arcadeDrive(0, 0);
 
@@ -110,6 +116,10 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
         yPos = 0;
 
         initController();
+
+        DriveModeChooser.setDefaultOption("Arcade - Two Joystick", DriveMode.ATWOJOY);
+        DriveModeChooser.addOption("Arcade - One Joystick", DriveMode.AONEJOY);
+        DriveModeChooser.addOption("Tank", DriveMode.TANK);
     }
 
     public void arcadeDrive(double throttle, double rotate) {
@@ -151,8 +161,10 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     }
 
     public void reset() {
-        leftLEncoder.setPosition(0);
-        rightLEncoder.setPosition(0);
+        leftFrontEncoder.setPosition(0);
+        rightFrontEncoder.setPosition(0);
+        leftBackEncoder.setPosition(0);
+        rightBackEncoder.setPosition(0);
         setChosenGear(Gear.SECOND);
     }
 
@@ -168,8 +180,8 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     private void updateDistance() {
         double changeinDistance = 0;
         double prevDistance = distance;
-        leftDistance = -leftLEncoder.getPosition();
-        rightDistance = rightLEncoder.getPosition();
+        leftDistance = -leftFrontEncoder.getPosition();
+        rightDistance = rightFrontEncoder.getPosition();
         distance = (leftDistance + rightDistance) / 2;
 
         AHRS navx = Robot.getInstance().getNAVX().getAHRS();
@@ -204,35 +216,9 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
         SmartDashboard.putNumber("DriveTrain/Position/xPos", getxPos());
         SmartDashboard.putNumber("DriveTrain/Position/yPos", getyPos());
 
-        if (leftL.getIdleMode() == IdleMode.kCoast) {
-            SmartDashboard.putString("DriveTrain/LeftEncoder/Idle Mode", "Coast");
-        } else if (leftL.getIdleMode() == IdleMode.kBrake) {
-            SmartDashboard.putString("DriveTrain/LeftEncoder/Idle Mode", "Brake");
-        }
-
-        if (rightL.getIdleMode() == IdleMode.kCoast) {
-            SmartDashboard.putString("DriveTrain/RightEncoder/Idle Mode", "Coast");
-        } else if (rightL.getIdleMode() == IdleMode.kBrake) {
-            SmartDashboard.putString("DriveTrain/RightEncoder/Idle Mode", "Brake");
-        }
-
-        SmartDashboard.putNumber("DriveTrain/LeftEncoder/Ramp Rate", leftL.getOpenLoopRampRate());
-        SmartDashboard.putNumber("DriveTrain/RightEncoder/Ramp Rate", rightL.getOpenLoopRampRate());
-
-        SmartDashboard.putNumber("DriveTrain/LeftEncoder/Voltage", leftL.getBusVoltage());
-        SmartDashboard.putNumber("DriveTrain/LeftEncoder/Temperature", leftL.getMotorTemperature());
-        SmartDashboard.putNumber("DriveTrain/LeftEncoder/Output", leftL.getAppliedOutput());
-
-        SmartDashboard.putNumber("DriveTrain/RightEncoder/Voltage", rightL.getBusVoltage());
-        SmartDashboard.putNumber("DriveTrain/RightEncoder/Temperature", rightL.getMotorTemperature());
-        SmartDashboard.putNumber("DriveTrain/RightEncoder/Output", rightL.getAppliedOutput());
-
         SmartDashboard.putNumber("DriveTrain/LeftEncoder/Encoder", leftDistance);
         SmartDashboard.putNumber("DriveTrain/RightEncoder/Encoder", rightDistance);
 
-        DriveModeChooser.setDefaultOption("Arcade - Two Joystick", DriveMode.ATWOJOY);
-        DriveModeChooser.addOption("Arcade - One Joystick", DriveMode.AONEJOY);
-        DriveModeChooser.addOption("Tank", DriveMode.TANK);
         SmartDashboard.putData("DriveTrain/Drive/Choose Drive", DriveModeChooser);
 
         SmartDashboard.putString("DriveTrain/Drive/Gear", ChosenGear.toString());
@@ -243,16 +229,17 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     }
 
     private void initEncoders() {
-        leftLEncoder = leftL.getEncoder();
-        leftFEncoder = leftF.getEncoder();
+        leftFrontEncoder = leftFront.getEncoder();
+        leftBackEncoder = leftBack.getEncoder();
 
-        rightLEncoder = rightL.getEncoder();
-        rightFEncoder = rightF.getEncoder();
+        rightFrontEncoder = rightFront.getEncoder();
+        rightBackEncoder = rightBack.getEncoder();
 
+        /*
         leftLEncoder.setPositionConversionFactor(0.09); // 0.0869565217
         rightLEncoder.setPositionConversionFactor(0.09); // 0.0869565217
         leftFEncoder.setPositionConversionFactor(0.09); // 0.0869565217
-        rightFEncoder.setPositionConversionFactor(0.09); // 0.0869565217
+        rightFEncoder.setPositionConversionFactor(0.09); // 0.0869565217*/
     }
 
     private void initController() {
@@ -269,12 +256,12 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
         //controller.refresh();
     }
 
-    public CANSparkMax getLeftL() {
-        return leftL;
+    public CANSparkMax getLeftFront() {
+        return leftFront;
     }
 
-    public CANSparkMax getRightL() {
-        return rightL;
+    public CANSparkMax getRightFront() {
+        return rightFront;
     }
 
     public double getyPos() {
