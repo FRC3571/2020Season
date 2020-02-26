@@ -61,7 +61,6 @@ public class Robot extends TimedRobot {
         auto = new PracticeAuto();
 
         colorSensor = new ColorSensor();
-        // runCamera();
         initController();
     }
 

@@ -19,12 +19,19 @@ public class DriveJoystick extends Command {
 
     @Override
     protected void execute() {
-        if (driveTrain.ChosenDrive == DriveTrain.DriveMode.AONEJOY) {
+        switch (driveTrain.ChosenDrive) {
+        case AONEJOY:
             driveTrain.arcadeDrive(controller.rightStick.getY(), -controller.rightStick.getX());
-        } else if (driveTrain.ChosenDrive == DriveTrain.DriveMode.ATWOJOY) {
+            break;
+        case ATWOJOY:
             driveTrain.arcadeDrive(controller.leftStick.getY(), -controller.rightStick.getX());
-        } else if (driveTrain.ChosenDrive == DriveTrain.DriveMode.TANK) {
+            break;
+        case TANK:
             driveTrain.tankdrive(controller.leftStick.getY(), controller.rightStick.getY());
+            break;
+        default:
+            driveTrain.arcadeDrive(controller.leftStick.getY(), -controller.rightStick.getX());
+            break;
         }
     }
 
