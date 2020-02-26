@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.commands.auto.PracticeAuto;
+import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.ChangeShooterPower;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.component.ColorSensor;
@@ -125,6 +126,7 @@ public class Robot extends TimedRobot {
         subsystemController.a.toggleWhenPressed(new Shoot());
 
         //Intake
+        subsystemController.b.toggleWhenPressed(new RunIntake());
 
         //Climber
 
