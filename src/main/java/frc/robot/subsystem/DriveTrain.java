@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANEncoder;
@@ -50,13 +49,13 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     private Gear ChosenGear;
     private SendableChooser<DriveMode> DriveModeChooser;
     // SparkMax Objects
-    private CANSparkMax leftFront;
-    private CANSparkMax rightFront;
-    private CANSparkMax leftBack;
-    private CANSparkMax rightBack;
+    private CANSparkMax leftFrontMotor;
+    private CANSparkMax rightFrontMotor;
+    private CANSparkMax leftBackMotor;
+    private CANSparkMax rightBackMotor;
 
     //Speed Controller Groups
-    SpeedControllerGroup left, right;
+    SpeedControllerGroup leftMotors, rightMotors;
 
     // underlying mechanism
     private DifferentialDrive drive;
@@ -76,7 +75,7 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
 
     @Override
     protected void initDefaultCommand() {
-        setDefaultCommand(new DriveJoystick(controller));
+        setDefaultCommand(new DriveJoystick());
     }
 
     public DriveTrain() {
@@ -86,27 +85,27 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
         DriveModeChooser = new SendableChooser<>();
 
         // initialize hardware
-        rightFront = new CANSparkMax(kRightFrontID, MotorType.kBrushless);
-        leftFront = new CANSparkMax(kLeftFrontID, MotorType.kBrushless);
-        rightBack = new CANSparkMax(kRightBackID, MotorType.kBrushless);
-        leftBack = new CANSparkMax(kLeftBackID, MotorType.kBrushless);
+        rightFrontMotor = new CANSparkMax(kRightFrontID, MotorType.kBrushless);
+        leftFrontMotor = new CANSparkMax(kLeftFrontID, MotorType.kBrushless);
+        rightBackMotor = new CANSparkMax(kRightBackID, MotorType.kBrushless);
+        leftBackMotor = new CANSparkMax(kLeftBackID, MotorType.kBrushless);
 
-        rightFront.restoreFactoryDefaults();
-        leftFront.restoreFactoryDefaults();
-        rightBack.restoreFactoryDefaults();
-        leftBack.restoreFactoryDefaults();
+        rightFrontMotor.restoreFactoryDefaults();
+        leftFrontMotor.restoreFactoryDefaults();
+        rightBackMotor.restoreFactoryDefaults();
+        leftBackMotor.restoreFactoryDefaults();
 
-        rightFront.setInverted(true);
-        leftFront.setInverted(true);
-        rightBack.setInverted(true);
-        leftBack.setInverted(true);
+        rightFrontMotor.setInverted(false);
+        leftFrontMotor.setInverted(false);
+        rightBackMotor.setInverted(false);
+        leftBackMotor.setInverted(false);
 
-        left = new SpeedControllerGroup(leftFront, leftBack);
+        leftMotors = new SpeedControllerGroup(leftFrontMotor, leftBackMotor);
 
-        right = new SpeedControllerGroup(rightFront, rightBack);
+        rightMotors = new SpeedControllerGroup(rightFrontMotor, rightBackMotor);
 
 
-        drive = new DifferentialDrive(left, right);
+        drive = new DifferentialDrive(leftMotors, rightMotors);
 
         initEncoders();
 
@@ -165,7 +164,7 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
         rightFrontEncoder.setPosition(0);
         leftBackEncoder.setPosition(0);
         rightBackEncoder.setPosition(0);
-        setChosenGear(Gear.SECOND);
+        setChosenGear(Gear.THIRD);
     }
 
     public void resetDisplacement() {
@@ -229,11 +228,11 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     }
 
     private void initEncoders() {
-        leftFrontEncoder = leftFront.getEncoder();
-        leftBackEncoder = leftBack.getEncoder();
+        leftFrontEncoder = leftFrontMotor.getEncoder();
+        leftBackEncoder = leftBackMotor.getEncoder();
 
-        rightFrontEncoder = rightFront.getEncoder();
-        rightBackEncoder = rightBack.getEncoder();
+        rightFrontEncoder = rightFrontMotor.getEncoder();
+        rightBackEncoder = rightBackMotor.getEncoder();
 
         /*
         leftLEncoder.setPositionConversionFactor(0.09); // 0.0869565217
@@ -257,11 +256,11 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     }
 
     public CANSparkMax getLeftFront() {
-        return leftFront;
+        return leftFrontMotor;
     }
 
     public CANSparkMax getRightFront() {
-        return rightFront;
+        return rightFrontMotor;
     }
 
     public double getyPos() {
@@ -290,5 +289,9 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
 
     public static double getKgearratiolow() {
         return kGearRatioLow;
+    }
+
+    public XboxController getController(){
+        return controller;
     }
 }

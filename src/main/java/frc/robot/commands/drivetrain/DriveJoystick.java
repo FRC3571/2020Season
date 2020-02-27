@@ -10,9 +10,9 @@ public class DriveJoystick extends Command {
     private DriveTrain driveTrain;
     private XboxController controller;
 
-    public DriveJoystick(XboxController controller) {
+    public DriveJoystick() {
         this.driveTrain = Robot.getInstance().getDrive();
-        this.controller = controller;
+        this.controller = driveTrain.getController();
         setInterruptible(true);
         requires(driveTrain);
     }
