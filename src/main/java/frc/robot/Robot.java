@@ -14,7 +14,6 @@ import frc.robot.commands.shooter.ChangeShooterPower;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.component.ColorSensor;
 import frc.robot.component.NAVX;
-import frc.robot.component.Vision;
 import frc.robot.subsystem.DriveTrain;
 import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Shooter;
@@ -37,7 +36,6 @@ public class Robot extends TimedRobot {
     private PowerDistributionPanel pdp;
     private NAVX navx;
     private static Robot exposedInstance;
-    private Vision visionProcessor;
     private ColorAssignment colorAssignment;
     private String gameData;
     CommandGroup auto;
@@ -56,8 +54,6 @@ public class Robot extends TimedRobot {
         logger = Logger.getLogger(getClass().getName());
 
         navx = new NAVX();
-
-        visionProcessor = new Vision();
 
         auto = new PracticeAuto();
 
@@ -94,17 +90,8 @@ public class Robot extends TimedRobot {
         shooter.refresh();
 
         colorSensor.matchedColor();
-        visionProcessor.refresh();
         getColorAssignment();
         Scheduler.getInstance().run();
-
-        // Test Code for Vision Processing, this will be moved to a command later
-        if (visionProcessor.yellowBallxPos() > 0.05)
-            driveTrain.tankdrive(0.7, -0.7);
-        else if (visionProcessor.yellowBallxPos() < -0.05)
-            driveTrain.tankdrive(-0.7, 0.7);
-        else
-            driveTrain.arcadeDrive(0, 0);
     }
 
     @Override
@@ -114,7 +101,6 @@ public class Robot extends TimedRobot {
     private void debug() {
         driveTrain.log();
         intake.log();
-        visionProcessor.log();
         navx.log();
         shooter.log();
     }
@@ -166,10 +152,6 @@ public class Robot extends TimedRobot {
             throw new IllegalStateException("#robotInit must finish its invocation!");
         }
         return exposedInstance;
-    }
-
-    public Vision getVisionProcessor() {
-        return visionProcessor;
     }
 
     public XboxController getSubsystemController() {
