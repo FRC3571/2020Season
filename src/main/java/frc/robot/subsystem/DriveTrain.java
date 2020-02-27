@@ -4,6 +4,7 @@ import frc.robot.Robot;
 import frc.robot.util.Refreshable;
 import frc.robot.commands.drivetrain.ChangeGear;
 import frc.robot.commands.drivetrain.DriveJoystick;
+import frc.robot.commands.drivetrain.DriveStraight;
 import frc.robot.commands.SetPosition;
 import frc.robot.util.Loggable;
 import frc.robot.util.RobotMath;
@@ -68,9 +69,6 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
 
     private double distance, leftDistance, rightDistance;
 
-    // Driver Controller
-    private XboxController controller;
-
     private double xPos, yPos;
 
     @Override
@@ -78,7 +76,7 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
         setDefaultCommand(new DriveJoystick());
     }
 
-    public DriveTrain() {
+	public DriveTrain() {
 
         ChosenDrive = DriveMode.ATWOJOY;
         ChosenGear = Gear.THIRD;
@@ -113,8 +111,6 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
 
         xPos = 0;
         yPos = 0;
-
-        initController();
 
         DriveModeChooser.setDefaultOption("Arcade - Two Joystick", DriveMode.ATWOJOY);
         DriveModeChooser.addOption("Arcade - One Joystick", DriveMode.AONEJOY);
@@ -160,11 +156,11 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     }
 
     public void reset() {
-        leftFrontEncoder.setPosition(0);
-        rightFrontEncoder.setPosition(0);
+        getLeftFrontEncoder().setPosition(0);
+        getRightFrontEncoder().setPosition(0);
         leftBackEncoder.setPosition(0);
         rightBackEncoder.setPosition(0);
-        setChosenGear(Gear.THIRD);
+        //setChosenGear(Gear.THIRD);
     }
 
     public void resetDisplacement() {
@@ -179,8 +175,8 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     private void updateDistance() {
         double changeinDistance = 0;
         double prevDistance = distance;
-        leftDistance = -leftFrontEncoder.getPosition();
-        rightDistance = rightFrontEncoder.getPosition();
+        leftDistance = -getLeftFrontEncoder().getPosition();
+        rightDistance = getRightFrontEncoder().getPosition();
         distance = (leftDistance + rightDistance) / 2;
 
         AHRS navx = Robot.getInstance().getNAVX().getAHRS();
@@ -228,10 +224,10 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     }
 
     private void initEncoders() {
-        leftFrontEncoder = leftFrontMotor.getEncoder();
+        setLeftFrontEncoder(leftFrontMotor.getEncoder());
         leftBackEncoder = leftBackMotor.getEncoder();
 
-        rightFrontEncoder = rightFrontMotor.getEncoder();
+        setRightFrontEncoder(rightFrontMotor.getEncoder());
         rightBackEncoder = rightBackMotor.getEncoder();
 
         /*
@@ -239,15 +235,6 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
         rightLEncoder.setPositionConversionFactor(0.09); // 0.0869565217
         leftFEncoder.setPositionConversionFactor(0.09); // 0.0869565217
         rightFEncoder.setPositionConversionFactor(0.09); // 0.0869565217*/
-    }
-
-    private void initController() {
-        controller = new XboxController(kController);
-
-        controller.x.whenPressed(new ChangeGear(1));
-        controller.y.whenPressed(new ChangeGear(2));
-        controller.b.whenPressed(new ChangeGear(3));
-        controller.a.whenPressed(new ChangeGear(4));
     }
 
     @Override
@@ -291,7 +278,19 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
         return kGearRatioLow;
     }
 
-    public XboxController getController(){
-        return controller;
-    }
+    public CANEncoder getRightFrontEncoder() {
+		return rightFrontEncoder;
+	}
+
+	public void setRightFrontEncoder(CANEncoder rightFrontEncoder) {
+		this.rightFrontEncoder = rightFrontEncoder;
+	}
+
+	public CANEncoder getLeftFrontEncoder() {
+		return leftFrontEncoder;
+	}
+
+	public void setLeftFrontEncoder(CANEncoder leftFrontEncoder) {
+		this.leftFrontEncoder = leftFrontEncoder;
+	}
 }

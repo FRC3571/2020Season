@@ -12,7 +12,7 @@ public class DriveJoystick extends Command {
 
     public DriveJoystick() {
         this.driveTrain = Robot.getInstance().getDrive();
-        this.controller = driveTrain.getController();
+        this.controller = Robot.getInstance().getDriverController();
         setInterruptible(true);
         requires(driveTrain);
     }
@@ -21,10 +21,10 @@ public class DriveJoystick extends Command {
     protected void execute() {
         switch (driveTrain.ChosenDrive) {
         case AONEJOY:
-            driveTrain.arcadeDrive(controller.rightStick.getY(), -controller.rightStick.getX());
+            driveTrain.arcadeDrive(controller.leftStick.getY(), controller.leftStick.getX());
             break;
         case ATWOJOY:
-            driveTrain.arcadeDrive(controller.leftStick.getY(), -controller.rightStick.getX());
+            driveTrain.arcadeDrive(controller.leftStick.getY(), controller.rightStick.getX());
             break;
         case TANK:
             driveTrain.tankdrive(controller.leftStick.getY(), controller.rightStick.getY());

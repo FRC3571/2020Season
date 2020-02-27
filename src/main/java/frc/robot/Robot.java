@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.commands.auto.PracticeAuto;
+import frc.robot.commands.drivetrain.ChangeGear;
+import frc.robot.commands.drivetrain.DriveStraight;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.ChangeShooterPower;
 import frc.robot.commands.shooter.Shoot;
@@ -21,7 +23,8 @@ import frc.robot.util.XboxController;
 
 public class Robot extends TimedRobot {
 
-    public static final int kController = 1;
+    public static final int kSubsystemController = 1;
+    public static final int kDriverController = 0;
 
     public enum ColorAssignment {
         RED, YELLOW, GREEN, BLUE, NONE
@@ -32,7 +35,7 @@ public class Robot extends TimedRobot {
     private Shooter shooter;
     private Logger logger;
     private ColorSensor colorSensor;
-    private XboxController subsystemController;
+    private XboxController subsystemController, driverController;
     private PowerDistributionPanel pdp;
     private NAVX navx;
     private static Robot exposedInstance;
@@ -45,7 +48,8 @@ public class Robot extends TimedRobot {
         exposedInstance = this;
 
         pdp = new PowerDistributionPanel();
-        subsystemController = new XboxController(kController);
+        subsystemController = new XboxController(kSubsystemController);
+        setDriverController(new XboxController(kDriverController));
 
         driveTrain = new DriveTrain();
         shooter = new Shooter();
@@ -61,7 +65,7 @@ public class Robot extends TimedRobot {
         initController();
     }
 
-    @Override
+	@Override
     public void robotPeriodic() {
         debug();
     }
@@ -118,6 +122,10 @@ public class Robot extends TimedRobot {
 
 
 
+        //Drive
+        driverController.rt.whenPressed(new ChangeGear(false));
+        driverController.rb.whenPressed(new ChangeGear(true));
+        driverController.lt.whileActive(new DriveStraight());
     }
 
     private void getColorAssignment() {
@@ -177,4 +185,12 @@ public class Robot extends TimedRobot {
     public NAVX getNAVX() {
         return navx;
     }
+
+    public XboxController getDriverController() {
+		return driverController;
+	}
+
+	public void setDriverController(XboxController driverController) {
+		this.driverController = driverController;
+	}
 }

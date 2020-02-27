@@ -3,35 +3,59 @@ package frc.robot.commands.drivetrain;
 import frc.robot.Robot;
 import frc.robot.subsystem.DriveTrain;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
-public class ChangeGear extends Command {
-    private int gear;
+public class ChangeGear extends InstantCommand {
+    private boolean up;
+    private DriveTrain driveTrain;
 
-    public ChangeGear(int d) {
-        gear = d;
+    public ChangeGear(boolean up) {
+        this.up = up;
+        
     }
 
     @Override
     protected void initialize() {
-        switch (gear) {
-            case 1:
-                Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.FIRST);
+        this.driveTrain = Robot.getInstance().getDrive();
+    }
+
+    @Override
+    protected void execute() {
+        if (up) {
+            switch (driveTrain.getChosenGear()) {
+            case FIRST:
+                driveTrain.setChosenGear(DriveTrain.Gear.SECOND);
                 break;
-            case 2:
-                Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.SECOND);
+            case SECOND:
+                driveTrain.setChosenGear(DriveTrain.Gear.THIRD);
                 break;
-            case 3:
-                Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.THIRD);
+            case THIRD:
+                driveTrain.setChosenGear(DriveTrain.Gear.FOURTH);
                 break;
-            case 4:
-                Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.FOURTH);
+            case FOURTH:
                 break;
             default:
                 break;
+            }
+        } else {
+            switch (driveTrain.getChosenGear()) {
+            case FIRST:
+                break;
+            case SECOND:
+                driveTrain.setChosenGear(DriveTrain.Gear.FIRST);
+                break;
+            case THIRD:
+                driveTrain.setChosenGear(DriveTrain.Gear.SECOND);
+                break;
+            case FOURTH:
+                driveTrain.setChosenGear(DriveTrain.Gear.THIRD);
+                break;
+            default:
+                break;
+            }
         }
     }
-    
+
     @Override
     protected boolean isFinished() {
         return true;

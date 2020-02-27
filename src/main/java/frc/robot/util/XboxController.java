@@ -45,7 +45,7 @@ public class XboxController extends Joystick {
     /* Default Values */
     private static final double DEFAULT_THUMBSTICK_DEADZONE = 0.1;  // Jiggle room for the thumbsticks
     private static final double DEFAULT_TRIGGER_DEADZONE    = 0.01; // Jiggle room for the triggers
-    private static final double DEFAULT_TRIGGER_SENSITIVITY = 0.6;  // If the trigger is beyond this limit, say it has been pressed
+    private static final double DEFAULT_TRIGGER_SENSITIVITY = 0;  // If the trigger is beyond this limit, say it has been pressed
     
     /* Button Mappings */
     private static final int    A_BUTTON_ID                 = 1;
