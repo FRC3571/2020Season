@@ -98,7 +98,7 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
         yPos = 0;
     }
 
-    public void arcadeDrive(double throttle, double rotate) {
+    public void arcadeDrive(double throttle, double rotate, boolean squaredRotation) {
         if (ChosenGear == Gear.FIRST) {
             throttle *= kGearRatioFirst;
             rotate *= kGearRatioFirst;
@@ -114,10 +114,10 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
 
         SmartDashboard.putNumber("DriveTrain/Drive/ArcadeDrive/Rotate", rotate);
 
-        drive.arcadeDrive(throttle, rotate);
+        drive.arcadeDrive(throttle, rotate, squaredRotation);
     }
 
-    public void tankdrive(double left, double right) {
+    public void tankdrive(double left, double right, boolean squaredRotation) {
         if (ChosenGear == Gear.FIRST) {
             left *= kGearRatioFirst;
             right *= kGearRatioFirst;
@@ -133,7 +133,7 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
 
         SmartDashboard.putNumber("DriveTrain/Drive/TankDrive/Right", right);
 
-        drive.tankDrive(left, right);
+        drive.tankDrive(left, right, squaredRotation);
     }
 
     public void resetEncoders() {

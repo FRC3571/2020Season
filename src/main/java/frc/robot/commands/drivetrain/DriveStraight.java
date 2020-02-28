@@ -32,7 +32,7 @@ public class DriveStraight extends PIDCommand {
     @Override
     protected void usePIDOutput(double output) {
         System.out.println(controller.LT.getX());
-        driveTrain.arcadeDrive(controller.LT.getX(), output);
+        driveTrain.arcadeDrive(controller.LT.getX(), output, false);
     }
 
     @Override

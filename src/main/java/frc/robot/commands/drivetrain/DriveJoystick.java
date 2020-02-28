@@ -21,16 +21,16 @@ public class DriveJoystick extends Command {
     protected void execute() {
         switch (driveTrain.ChosenDrive) {
         case AONEJOY:
-            driveTrain.arcadeDrive(controller.leftStick.getY(), controller.leftStick.getX());
+            driveTrain.arcadeDrive(controller.leftStick.getY(), controller.leftStick.getX(), true);
             break;
         case ATWOJOY:
-            driveTrain.arcadeDrive(controller.leftStick.getY(), controller.rightStick.getX());
+            driveTrain.arcadeDrive(controller.leftStick.getY(), controller.rightStick.getX(), true);
             break;
         case TANK:
-            driveTrain.tankdrive(controller.leftStick.getY(), controller.rightStick.getY());
+            driveTrain.tankdrive(controller.leftStick.getY(), controller.rightStick.getY(), true);
             break;
         default:
-            driveTrain.arcadeDrive(controller.leftStick.getY(), -controller.rightStick.getX());
+            driveTrain.arcadeDrive(controller.leftStick.getY(), -controller.rightStick.getX(), true);
             break;
         }
     }
@@ -42,6 +42,6 @@ public class DriveJoystick extends Command {
 
     @Override
     protected void end() {
-        driveTrain.arcadeDrive(0, 0);
+        driveTrain.arcadeDrive(0, 0, false);
     }
 }

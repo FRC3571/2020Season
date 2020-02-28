@@ -65,7 +65,7 @@ public class TurnToAngle extends PIDCommand {
             output = RobotMath.mapDouble(output, 0, 1, 0.2, 0.5);
         }
 
-        Robot.getInstance().getDrive().arcadeDrive(0, -output);
+        Robot.getInstance().getDrive().arcadeDrive(0, -output, false);
     }
 
     @Override
