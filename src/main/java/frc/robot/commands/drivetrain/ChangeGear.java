@@ -11,7 +11,6 @@ public class ChangeGear extends InstantCommand {
 
     public ChangeGear(boolean up) {
         this.up = up;
-        
     }
 
     @Override

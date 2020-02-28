@@ -70,7 +70,7 @@ public class TurnToAngle extends PIDCommand {
 
     @Override
     protected boolean isFinished() {
-        return Math.abs(angle - ahrs.getYaw()) < 2 ;
+        return Math.abs(angle - ahrs.getYaw()) < kToleranceDegrees ;
     }
     
 }

@@ -41,7 +41,7 @@ public class Robot extends TimedRobot {
     private static Robot exposedInstance;
     private ColorAssignment colorAssignment;
     private String gameData;
-    CommandGroup auto;
+    private CommandGroup auto;
 
     @Override
     public void robotInit() {
@@ -86,14 +86,13 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-
+        Scheduler.getInstance().run();
         driveTrain.refresh();
         intake.refresh();
         shooter.refresh();
 
         colorSensor.matchedColor();
         getColorAssignment();
-        Scheduler.getInstance().run();
     }
 
     @Override

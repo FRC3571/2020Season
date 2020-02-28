@@ -37,7 +37,7 @@ public class DriveJoystick extends Command {
 
     @Override
     protected boolean isFinished() {
-        return false; // Runs until interrupted
+        return false;
     }
 
     @Override
