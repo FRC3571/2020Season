@@ -21,25 +21,22 @@ public class DriveStraight extends PIDCommand {
 
     @Override
     protected void initialize() {
-        
-        driveTrain.reset();
+        driveTrain.resetEncoders();
     }
 
     @Override
     protected double returnPIDInput() {
-        // TODO Auto-generated method stub
         return Math.abs(-driveTrain.getLeftFrontEncoder().getPosition() - driveTrain.getRightFrontEncoder().getPosition());
     }
 
     @Override
     protected void usePIDOutput(double output) {
-        System.out.println(controller.lt.getX());
-        driveTrain.arcadeDrive(controller.lt.getX(), output);
+        System.out.println(controller.LT.getX());
+        driveTrain.arcadeDrive(controller.LT.getX(), output);
     }
 
     @Override
     protected boolean isFinished() {
-        // TODO Auto-generated method stub
         return false;
     }
 }

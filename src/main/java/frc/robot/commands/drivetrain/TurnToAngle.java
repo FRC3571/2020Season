@@ -62,9 +62,9 @@ public class TurnToAngle extends Command implements PIDOutput {
 
     @Override
     protected void initialize() {
-        Robot.getInstance().getDrive().reset();
+        Robot.getInstance().getDrive().resetEncoders();
 
-        Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.THIRD);
+        Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.FOURTH);
 
         turnController.enable();
     }

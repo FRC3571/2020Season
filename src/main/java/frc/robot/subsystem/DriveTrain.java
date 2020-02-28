@@ -2,13 +2,10 @@ package frc.robot.subsystem;
 
 import frc.robot.Robot;
 import frc.robot.util.Refreshable;
-import frc.robot.commands.drivetrain.ChangeGear;
 import frc.robot.commands.drivetrain.DriveJoystick;
-import frc.robot.commands.drivetrain.DriveStraight;
 import frc.robot.commands.SetPosition;
 import frc.robot.util.Loggable;
 import frc.robot.util.RobotMath;
-import frc.robot.util.XboxController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -21,8 +18,6 @@ import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANEncoder;
 
 public class DriveTrain extends Subsystem implements Loggable, Refreshable {
-
-    private static final int kController = 0;
 
     private static final double kGearRatioLow = 4.6;
     private static final double kGearRatioHigh = 2.7;
@@ -50,39 +45,33 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     private Gear ChosenGear;
     private SendableChooser<DriveMode> DriveModeChooser;
     // SparkMax Objects
-    private CANSparkMax leftFrontMotor;
-    private CANSparkMax rightFrontMotor;
-    private CANSparkMax leftBackMotor;
-    private CANSparkMax rightBackMotor;
+    private CANSparkMax leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor;
 
-    //Speed Controller Groups
+    // Speed Controller Groups
     SpeedControllerGroup leftMotors, rightMotors;
 
     // underlying mechanism
     private DifferentialDrive drive;
 
     // Distance Encoders
-    private CANEncoder leftFrontEncoder;
-    private CANEncoder rightFrontEncoder;
-    private CANEncoder leftBackEncoder;
-    private CANEncoder rightBackEncoder;
+    private CANEncoder leftFrontEncoder, rightFrontEncoder, leftBackEncoder, rightBackEncoder;
 
-    private double distance, leftDistance, rightDistance;
-
-    private double xPos, yPos;
+    private double distance, leftDistance, rightDistance, xPos, yPos;
 
     @Override
     protected void initDefaultCommand() {
         setDefaultCommand(new DriveJoystick());
     }
 
-	public DriveTrain() {
-
+    public DriveTrain() {
         ChosenDrive = DriveMode.ATWOJOY;
         ChosenGear = Gear.THIRD;
-        DriveModeChooser = new SendableChooser<>();
 
-        // initialize hardware
+        DriveModeChooser = new SendableChooser<>();
+        DriveModeChooser.setDefaultOption("Arcade - One Joystick", DriveMode.AONEJOY);
+        DriveModeChooser.addOption("Arcade - Two Joystick", DriveMode.ATWOJOY);
+        DriveModeChooser.addOption("Tank", DriveMode.TANK);
+
         rightFrontMotor = new CANSparkMax(kRightFrontID, MotorType.kBrushless);
         leftFrontMotor = new CANSparkMax(kLeftFrontID, MotorType.kBrushless);
         rightBackMotor = new CANSparkMax(kRightBackID, MotorType.kBrushless);
@@ -99,22 +88,14 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
         leftBackMotor.setInverted(false);
 
         leftMotors = new SpeedControllerGroup(leftFrontMotor, leftBackMotor);
-
         rightMotors = new SpeedControllerGroup(rightFrontMotor, rightBackMotor);
-
 
         drive = new DifferentialDrive(leftMotors, rightMotors);
 
         initEncoders();
 
-        arcadeDrive(0, 0);
-
         xPos = 0;
         yPos = 0;
-
-        DriveModeChooser.setDefaultOption("Arcade - Two Joystick", DriveMode.ATWOJOY);
-        DriveModeChooser.addOption("Arcade - One Joystick", DriveMode.AONEJOY);
-        DriveModeChooser.addOption("Tank", DriveMode.TANK);
     }
 
     public void arcadeDrive(double throttle, double rotate) {
@@ -155,12 +136,11 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
         drive.tankDrive(left, right);
     }
 
-    public void reset() {
-        getLeftFrontEncoder().setPosition(0);
-        getRightFrontEncoder().setPosition(0);
+    public void resetEncoders() {
+        leftFrontEncoder.setPosition(0);
+        rightFrontEncoder.setPosition(0);
         leftBackEncoder.setPosition(0);
         rightBackEncoder.setPosition(0);
-        //setChosenGear(Gear.THIRD);
     }
 
     public void resetDisplacement() {
@@ -175,8 +155,8 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     private void updateDistance() {
         double changeinDistance = 0;
         double prevDistance = distance;
-        leftDistance = -getLeftFrontEncoder().getPosition();
-        rightDistance = getRightFrontEncoder().getPosition();
+        leftDistance = -leftFrontEncoder.getPosition();
+        rightDistance = rightFrontEncoder.getPosition();
         distance = (leftDistance + rightDistance) / 2;
 
         AHRS navx = Robot.getInstance().getNAVX().getAHRS();
@@ -197,14 +177,13 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
 
         angle = Math.toRadians(angle);
 
-        setxPos(getxPos() + (changeinDistance * Math.cos(angle)));
+        xPos = xPos + (changeinDistance * Math.cos(angle));
 
-        setyPos(getyPos() + (changeinDistance * Math.sin(angle)));
+        yPos = yPos + (changeinDistance * Math.sin(angle));
     }
 
     @Override
     public void log() {
-
         updateDistance();
 
         SmartDashboard.putNumber("DriveTrain/Position/Distance", distance);
@@ -224,29 +203,29 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     }
 
     private void initEncoders() {
-        setLeftFrontEncoder(leftFrontMotor.getEncoder());
+        leftFrontEncoder = leftFrontMotor.getEncoder();
         leftBackEncoder = leftBackMotor.getEncoder();
 
-        setRightFrontEncoder(rightFrontMotor.getEncoder());
+        rightFrontEncoder = rightFrontMotor.getEncoder();
         rightBackEncoder = rightBackMotor.getEncoder();
 
         /*
-        leftLEncoder.setPositionConversionFactor(0.09); // 0.0869565217
-        rightLEncoder.setPositionConversionFactor(0.09); // 0.0869565217
-        leftFEncoder.setPositionConversionFactor(0.09); // 0.0869565217
-        rightFEncoder.setPositionConversionFactor(0.09); // 0.0869565217*/
+         * leftLEncoder.setPositionConversionFactor(0.09); // 0.0869565217
+         * rightLEncoder.setPositionConversionFactor(0.09); // 0.0869565217
+         * leftFEncoder.setPositionConversionFactor(0.09); // 0.0869565217
+         * rightFEncoder.setPositionConversionFactor(0.09); // 0.0869565217
+         */
     }
 
     @Override
     public void refresh() {
-        //controller.refresh();
     }
 
-    public CANSparkMax getLeftFront() {
+    public CANSparkMax getLeftFrontMotor() {
         return leftFrontMotor;
     }
 
-    public CANSparkMax getRightFront() {
+    public CANSparkMax getRightFrontMotor() {
         return rightFrontMotor;
     }
 
@@ -279,18 +258,18 @@ public class DriveTrain extends Subsystem implements Loggable, Refreshable {
     }
 
     public CANEncoder getRightFrontEncoder() {
-		return rightFrontEncoder;
-	}
+        return rightFrontEncoder;
+    }
 
-	public void setRightFrontEncoder(CANEncoder rightFrontEncoder) {
-		this.rightFrontEncoder = rightFrontEncoder;
-	}
+    public void setRightFrontEncoder(CANEncoder rightFrontEncoder) {
+        this.rightFrontEncoder = rightFrontEncoder;
+    }
 
-	public CANEncoder getLeftFrontEncoder() {
-		return leftFrontEncoder;
-	}
+    public CANEncoder getLeftFrontEncoder() {
+        return leftFrontEncoder;
+    }
 
-	public void setLeftFrontEncoder(CANEncoder leftFrontEncoder) {
-		this.leftFrontEncoder = leftFrontEncoder;
-	}
+    public void setLeftFrontEncoder(CANEncoder leftFrontEncoder) {
+        this.leftFrontEncoder = leftFrontEncoder;
+    }
 }

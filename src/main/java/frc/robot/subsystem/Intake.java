@@ -20,7 +20,7 @@ public class Intake extends Subsystem implements Loggable, Refreshable {
 
     @Override
     public void refresh() {
-    
+
     }
 
     @Override
@@ -33,7 +33,7 @@ public class Intake extends Subsystem implements Loggable, Refreshable {
 
     }
 
-    public void setMotor(double speed){
+    public void setMotor(double speed) {
         motor.set(ControlMode.PercentOutput, speed);
     }
 }

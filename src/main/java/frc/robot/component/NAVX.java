@@ -7,23 +7,22 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.Loggable;
 
-public class NAVX implements Loggable{
+public class NAVX implements Loggable {
     private AHRS ahrs;
 
     public NAVX() {
         try {
-            ahrs = new AHRS(SPI.Port.kMXP); 
+            ahrs = new AHRS(SPI.Port.kMXP);
         } catch (final RuntimeException ex) {
             DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
         }
-
     }
 
     public void log() {
         SmartDashboard.putNumber("DriveTrain/Position/Yaw", ahrs.getYaw());
     }
 
-    public AHRS getAHRS(){
+    public AHRS getAHRS() {
         return ahrs;
     }
 }

@@ -48,8 +48,6 @@ public class Robot extends TimedRobot {
         exposedInstance = this;
 
         pdp = new PowerDistributionPanel();
-        subsystemController = new XboxController(kSubsystemController);
-        setDriverController(new XboxController(kDriverController));
 
         driveTrain = new DriveTrain();
         shooter = new Shooter();
@@ -62,10 +60,10 @@ public class Robot extends TimedRobot {
         auto = new PracticeAuto();
 
         colorSensor = new ColorSensor();
-        initController();
+        initControllers();
     }
 
-	@Override
+    @Override
     public void robotPeriodic() {
         debug();
     }
@@ -109,23 +107,24 @@ public class Robot extends TimedRobot {
         shooter.log();
     }
 
-    private void initController() {
-        //Shooter
+    private void initControllers() {
+        subsystemController = new XboxController(kSubsystemController);
+        driverController = new XboxController(kDriverController);
+
+        // Shooter
         subsystemController.dPad.up.whenPressed(new ChangeShooterPower(true));
         subsystemController.dPad.down.whenPressed(new ChangeShooterPower(false));
-        subsystemController.a.toggleWhenPressed(new Shoot());
+        subsystemController.A.toggleWhenPressed(new Shoot());
 
-        //Intake
-        subsystemController.b.toggleWhenPressed(new RunIntake());
+        // Intake
+        subsystemController.B.toggleWhenPressed(new RunIntake());
 
-        //Climber
+        // Climber
 
-
-
-        //Drive
-        driverController.rt.whenPressed(new ChangeGear(false));
-        driverController.rb.whenPressed(new ChangeGear(true));
-        driverController.lt.whileActive(new DriveStraight());
+        // Drive
+        driverController.RT.whenPressed(new ChangeGear(false));
+        driverController.RB.whenPressed(new ChangeGear(true));
+        driverController.LT.whileActive(new DriveStraight());
     }
 
     private void getColorAssignment() {
@@ -187,10 +186,6 @@ public class Robot extends TimedRobot {
     }
 
     public XboxController getDriverController() {
-		return driverController;
-	}
-
-	public void setDriverController(XboxController driverController) {
-		this.driverController = driverController;
-	}
+        return driverController;
+    }
 }

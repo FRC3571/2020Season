@@ -21,8 +21,8 @@ public class DriveStraightDistance extends Command {
     public DriveStraightDistance(double d) {
 
         targetDistance = d;
-        leftPID = Robot.getInstance().getDrive().getLeftFront().getPIDController();
-        rightPID = Robot.getInstance().getDrive().getRightFront().getPIDController();
+        leftPID = Robot.getInstance().getDrive().getLeftFrontMotor().getPIDController();
+        rightPID = Robot.getInstance().getDrive().getRightFrontMotor().getPIDController();
 
         // PID coefficients
         kP = 5e-5;
@@ -78,8 +78,8 @@ public class DriveStraightDistance extends Command {
             targetDistance *= -1;
         }
 
-        leftPID = Robot.getInstance().getDrive().getLeftFront().getPIDController();
-        rightPID = Robot.getInstance().getDrive().getRightFront().getPIDController();
+        leftPID = Robot.getInstance().getDrive().getLeftFrontMotor().getPIDController();
+        rightPID = Robot.getInstance().getDrive().getRightFrontMotor().getPIDController();
 
         // PID coefficients
         kP = 5e-5;
@@ -126,7 +126,7 @@ public class DriveStraightDistance extends Command {
 
     @Override
     protected void initialize() {
-        Robot.getInstance().getDrive().reset();
+        Robot.getInstance().getDrive().resetEncoders();
         Robot.getInstance().getDrive().setChosenGear(DriveTrain.Gear.FOURTH);
     }
 

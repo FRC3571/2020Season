@@ -10,7 +10,6 @@ public class Shoot extends Command {
 
     public Shoot() {
         this.shooter = Robot.getInstance().getShooter();
-        setInterruptible(true);
         requires(shooter);
     }
 

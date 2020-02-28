@@ -10,15 +10,13 @@ import frc.robot.util.Loggable;
 import frc.robot.util.Refreshable;
 
 public class Shooter extends Subsystem implements Loggable, Refreshable {
+    
     private static final int kTopMotorID = 11;
     private static final int kBottomMotorID = 21;
-    
 
-    private CANSparkMax topMotor;
-    private CANSparkMax bottomMotor;
+    private CANSparkMax topMotor, bottomMotor;
 
-    private CANEncoder topEncoder;
-    private CANEncoder bottomEncoder;
+    private CANEncoder topEncoder, bottomEncoder;
 
     private double topSpeed, bottomSpeed, topBottomRatio;
 
@@ -34,14 +32,14 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
 
         topBottomRatio = 0.75;
         bottomSpeed = 1;
-        topSpeed = bottomSpeed*topBottomRatio;
+        topSpeed = bottomSpeed * topBottomRatio;
 
         initEncoders();
     }
 
-	@Override
+    @Override
     public void refresh() {
-        
+
     }
 
     @Override
@@ -52,7 +50,6 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
 
     @Override
     protected void initDefaultCommand() {
-        //setDefaultCommand(new ManualShoot());
     }
 
     public void setMotors(double topSpeed, double bottomSpeed) {
@@ -60,9 +57,9 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
         bottomMotor.set(bottomSpeed);
     }
 
-    public void setSpeed(double bottomSpeed){
-        this.bottomSpeed = bottomSpeed;
-        this.topSpeed = bottomSpeed*=topBottomRatio;
+    public void setSpeed(double bottomSpeed) {
+        this.bottomSpeed = Math.max(0, Math.min(bottomSpeed, 1));
+        this.topSpeed = bottomSpeed *= topBottomRatio;
     }
 
     private void initEncoders() {
@@ -71,18 +68,18 @@ public class Shooter extends Subsystem implements Loggable, Refreshable {
     }
 
     public double getBottomSpeed() {
-		return bottomSpeed;
-	}
+        return bottomSpeed;
+    }
 
-	public void setBottomSpeed(double bottomSpeed) {
-		this.bottomSpeed = bottomSpeed;
-	}
+    public void setBottomSpeed(double bottomSpeed) {
+        this.bottomSpeed = bottomSpeed;
+    }
 
-	public double getTopSpeed() {
-		return topSpeed;
-	}
+    public double getTopSpeed() {
+        return topSpeed;
+    }
 
-	public void setTopSpeed(double topSpeed) {
-		this.topSpeed = topSpeed;
+    public void setTopSpeed(double topSpeed) {
+        this.topSpeed = topSpeed;
     }
 }

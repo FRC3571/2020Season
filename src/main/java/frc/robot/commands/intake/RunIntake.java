@@ -3,7 +3,6 @@ package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystem.Intake;
-import frc.robot.subsystem.Shooter;
 
 public class RunIntake extends Command {
 
@@ -13,7 +12,6 @@ public class RunIntake extends Command {
 
     public RunIntake() {
         this.intake = Robot.getInstance().getIntake();
-        setInterruptible(true);
         requires(intake);
     }
 
