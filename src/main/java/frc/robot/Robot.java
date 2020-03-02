@@ -16,6 +16,7 @@ import frc.robot.commands.shooter.ChangeShooterPower;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.component.ColorSensor;
 import frc.robot.component.NAVX;
+import frc.robot.subsystem.ControlPanelWheel;
 import frc.robot.subsystem.DriveTrain;
 import frc.robot.subsystem.Intake;
 import frc.robot.subsystem.Shooter;
@@ -26,21 +27,16 @@ public class Robot extends TimedRobot {
     public static final int kSubsystemController = 1;
     public static final int kDriverController = 0;
 
-    public enum ColorAssignment {
-        RED, YELLOW, GREEN, BLUE, NONE
-    }
-
     private DriveTrain driveTrain;
     private Intake intake;
     private Shooter shooter;
+    private ControlPanelWheel controlPanelWheel;
     private Logger logger;
     private ColorSensor colorSensor;
     private XboxController subsystemController, driverController;
     private PowerDistributionPanel pdp;
     private NAVX navx;
     private static Robot exposedInstance;
-    private ColorAssignment colorAssignment;
-    private String gameData;
     private CommandGroup auto;
 
     @Override
@@ -52,6 +48,7 @@ public class Robot extends TimedRobot {
         driveTrain = new DriveTrain();
         shooter = new Shooter();
         intake = new Intake();
+        controlPanelWheel = new ControlPanelWheel();
 
         logger = Logger.getLogger(getClass().getName());
 
@@ -90,9 +87,9 @@ public class Robot extends TimedRobot {
         driveTrain.refresh();
         intake.refresh();
         shooter.refresh();
+        controlPanelWheel.refresh();
 
         colorSensor.matchedColor();
-        getColorAssignment();
     }
 
     @Override
@@ -104,6 +101,7 @@ public class Robot extends TimedRobot {
         intake.log();
         navx.log();
         shooter.log();
+        controlPanelWheel.log();
     }
 
     private void initControllers() {
@@ -126,28 +124,6 @@ public class Robot extends TimedRobot {
         driverController.LT.whileActive(new DriveStraight());
     }
 
-    private void getColorAssignment() {
-        gameData = DriverStation.getInstance().getGameSpecificMessage();
-        if (gameData.length() > 0) {
-            switch (gameData.charAt(0)) {
-            case 'B':
-                colorAssignment = ColorAssignment.BLUE;
-                break;
-            case 'G':
-                colorAssignment = ColorAssignment.GREEN;
-                break;
-            case 'R':
-                colorAssignment = ColorAssignment.RED;
-                break;
-            case 'Y':
-                colorAssignment = ColorAssignment.YELLOW;
-                break;
-            default:
-                // This is corrupt data
-                break;
-            }
-        }
-    }
 
     public void log(final Level logLevel, final String message) {
         logger.log(logLevel, message);
@@ -186,5 +162,9 @@ public class Robot extends TimedRobot {
 
     public XboxController getDriverController() {
         return driverController;
+    }
+
+    public ControlPanelWheel getControlPanelWheel(){
+        return controlPanelWheel;
     }
 }

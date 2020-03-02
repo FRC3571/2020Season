@@ -10,12 +10,12 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Intake extends Subsystem implements Loggable, Refreshable {
 
-    private static int kMotorPort = 1;
+    private static int kMotorID = 1;
 
     private VictorSPX motor;
 
     public Intake() {
-        motor = new VictorSPX(kMotorPort);
+        motor = new VictorSPX(kMotorID);
     }
 
     @Override
